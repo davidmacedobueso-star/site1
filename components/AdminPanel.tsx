@@ -433,6 +433,107 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded, onCont
                                         className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white p-2 h-20 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                                     />
                                 </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Imagem de Fundo (Opcional)</label>
+                                    <div className="space-y-2">
+                                        {siteContent.header.backgroundImage && (
+                                            <div className="aspect-video w-32 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden">
+                                                <img src={siteContent.header.backgroundImage} alt="Fundo" className="w-full h-full object-cover" />
+                                            </div>
+                                        )}
+                                        <input 
+                                            type="file" 
+                                            accept="image/*"
+                                            onChange={e => e.target.files && handleSectionImageUpload('header', null, e.target.files[0])}
+                                            className="text-[10px] w-full"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Products Section */}
+                            <div className="space-y-4 border-b border-gray-200 dark:border-gray-800 pb-6">
+                                <h3 className="font-bold text-sm uppercase tracking-wider text-yellow-500">Produtos em Destaque</h3>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Título</label>
+                                    <input 
+                                        type="text" 
+                                        value={siteContent.products.title} 
+                                        onChange={e => setSiteContent({ ...siteContent, products: { ...siteContent.products, title: e.target.value } })}
+                                        className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Subtítulo</label>
+                                    <textarea 
+                                        value={siteContent.products.subtitle} 
+                                        onChange={e => setSiteContent({ ...siteContent, products: { ...siteContent.products, subtitle: e.target.value } })}
+                                        className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white p-2 h-20 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Services Section */}
+                            <div className="space-y-4 border-b border-gray-200 dark:border-gray-800 pb-6">
+                                <h3 className="font-bold text-sm uppercase tracking-wider text-yellow-500">Serviços</h3>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Título</label>
+                                    <input 
+                                        type="text" 
+                                        value={siteContent.services.title} 
+                                        onChange={e => setSiteContent({ ...siteContent, services: { ...siteContent.services, title: e.target.value } })}
+                                        className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Subtítulo</label>
+                                    <textarea 
+                                        value={siteContent.services.subtitle} 
+                                        onChange={e => setSiteContent({ ...siteContent, services: { ...siteContent.services, subtitle: e.target.value } })}
+                                        className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white p-2 h-20 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Imagens dos Serviços</label>
+                                    <div className="grid grid-cols-3 gap-4 mt-2">
+                                        {['injection', 'vacuum', 'chrome'].map((key) => (
+                                            <div key={key} className="space-y-2">
+                                                <p className="text-[10px] uppercase font-bold text-gray-500">{key === 'injection' ? 'Injeção' : key === 'vacuum' ? 'Metalização' : 'Cromagem'}</p>
+                                                <div className="aspect-video bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden">
+                                                    <img src={siteContent.services.images?.[key] || `https://picsum.photos/seed/${key}-process/800/450`} alt={key} className="w-full h-full object-cover" />
+                                                </div>
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*"
+                                                    onChange={async (e) => {
+                                                        if (e.target.files) {
+                                                            const file = e.target.files[0];
+                                                            const formData = new FormData();
+                                                            formData.append('image', file);
+                                                            try {
+                                                                const response = await fetch('/api/admin/upload', {
+                                                                    method: 'POST',
+                                                                    headers: { 'Authorization': `Bearer ${token}` },
+                                                                    body: formData,
+                                                                });
+                                                                const data = await response.json();
+                                                                if (data.success) {
+                                                                    const newContent = { ...siteContent };
+                                                                    if (!newContent.services.images) newContent.services.images = {};
+                                                                    newContent.services.images[key] = data.imageUrl;
+                                                                    setSiteContent(newContent);
+                                                                }
+                                                            } catch (err) {
+                                                                alert('Erro ao carregar imagem');
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="text-[10px] w-full"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
 
                             {/* About Us Section */}

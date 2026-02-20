@@ -55,6 +55,11 @@ interface ServicesProps {
         subtitle: string;
         ctaTitle: string;
         ctaSubtitle: string;
+        images?: {
+            injection?: string;
+            vacuum?: string;
+            chrome?: string;
+        };
     };
 }
 
@@ -73,9 +78,9 @@ const Services: React.FC<ServicesProps> = ({ onContactClick, content }) => {
     };
 
     const serviceImages: { [key: string]: string } = {
-        injection: 'https://picsum.photos/seed/injection-process/800/450',
-        vacuum: 'https://picsum.photos/seed/vacuum-chamber/800/450',
-        chrome: 'https://picsum.photos/seed/chrome-plating-line/800/450',
+        injection: content?.images?.injection || 'https://picsum.photos/seed/injection-process/800/450',
+        vacuum: content?.images?.vacuum || 'https://picsum.photos/seed/vacuum-chamber/800/450',
+        chrome: content?.images?.chrome || 'https://picsum.photos/seed/chrome-plating-line/800/450',
     };
 
     return (
