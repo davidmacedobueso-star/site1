@@ -1,12 +1,22 @@
 import React from 'react';
 
-const CTA: React.FC = () => {
+interface CTAProps {
+    content?: {
+        title: string;
+        subtitle: string;
+    };
+}
+
+const CTA: React.FC<CTAProps> = ({ content }) => {
+    const title = content?.title || "SUBSCREVA A NEWSLETTER";
+    const subtitle = content?.subtitle || "Aproveite 15% de desconto na primeira compra.";
+
     return (
         <section className="py-12 bg-yellow-400">
             <div className="max-w-4xl mx-auto px-6 text-center">
-                <h2 className="text-lg md:text-xl font-bold mb-2 text-black">SUBSCREVA A NEWSLETTER</h2>
+                <h2 className="text-lg md:text-xl font-bold mb-2 text-black">{title}</h2>
                 <p className="text-black mb-6 text-sm md:text-base">
-                    Aproveite 15% de desconto na primeira compra.
+                    {subtitle}
                 </p>
                 <a 
                     href="#subscribe"

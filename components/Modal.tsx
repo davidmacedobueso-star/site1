@@ -25,12 +25,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, size = 'md', p
             role="dialog"
         >
             <div 
-                className={`bg-white shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto relative animate-fade-in-up`}
+                className={`bg-white dark:bg-gray-900 shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto relative animate-fade-in-up transition-colors duration-300`}
                 onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
             >
                 <button 
                     onClick={onClose} 
-                    className="absolute top-3 right-3 text-gray-500 hover:text-black transition-colors z-10 rounded-full p-1"
+                    className="absolute top-3 right-3 text-gray-500 hover:text-black dark:hover:text-white transition-colors z-10 rounded-full p-1"
                     aria-label="Fechar modal"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -15,49 +15,67 @@ const galleryImages = [
     { seed: 'early-product', alt: 'Um dos primeiros produtos fabricados' },
 ];
 
-const AboutUs: React.FC = () => {
+interface AboutUsProps {
+    content?: {
+        title: string;
+        subtitle: string;
+        text1: string;
+        text2: string;
+        stats: { value: string; label: string }[];
+        gallery: { seed?: string; imageUrl?: string; alt: string }[];
+    };
+}
+
+const AboutUs: React.FC<AboutUsProps> = ({ content }) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    const title = content?.title || "A Nossa História de Precisão";
+    const subtitle = content?.subtitle || "Fundada no coração industrial de Braga, a nossa paixão é transformar polímeros em componentes de alta performance.";
+    const text1 = content?.text1 || "Desde a nossa fundação, a Plásticos Boeso tem sido um pilar de inovação e qualidade na indústria de injeção de plásticos. Nascemos com a missão de fornecer soluções técnicas para os setores mais exigentes, com um foco especial na indústria automóvel.";
+    const text2 = content?.text2 || "A nossa filosofia assenta em três pilares: precisão absoluta, tecnologia de ponta e uma parceria próxima com os nossos clientes. Cada peça que produzimos é o resultado de um processo meticuloso, desde a seleção do material até ao acabamento final, seja ele uma metalização sofisticada ou uma cromagem de elevada resistência.";
+    const stats = content?.stats || [
+        { value: "+25", label: "Anos de Experiência" },
+        { value: "+10M", label: "Peças / Ano" },
+        { value: "IATF 16949", label: "Certificação" },
+    ];
+    const gallery = content?.gallery || galleryImages;
 
     return (
         <>
-            <section id="sobre" className="py-24 bg-white">
+            <section id="sobre" className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold mb-4">A Nossa História de Precisão</h2>
-                        <p className="text-gray-600 max-w-2xl mx-auto text-lg">Fundada no coração industrial de Braga, a nossa paixão é transformar polímeros em componentes de alta performance.</p>
+                        <h2 className="text-3xl font-bold mb-4 text-black dark:text-white">{title}</h2>
+                        <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">{subtitle}</p>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-16 items-center">
-                        <div className="space-y-6 text-gray-700 text-base leading-relaxed">
-                            <p>
-                                Desde a nossa fundação, a Plásticos Boeso tem sido um pilar de inovação e qualidade na indústria de injeção de plásticos. Nascemos com a missão de fornecer soluções técnicas para os setores mais exigentes, com um foco especial na indústria automóvel.
-                            </p>
-                            <p>
-                                A nossa filosofia assenta em três pilares: precisão absoluta, tecnologia de ponta e uma parceria próxima com os nossos clientes. Cada peça que produzimos é o resultado de um processo meticuloso, desde a seleção do material até ao acabamento final, seja ele uma metalização sofisticada ou uma cromagem de elevada resistência.
-                            </p>
+                        <div className="space-y-6 text-gray-700 dark:text-gray-300 text-base leading-relaxed">
+                            <p>{text1}</p>
+                            <p>{text2}</p>
                             <div className="pt-4">
                                 <span className="inline-block h-1 w-20 bg-yellow-400"></span>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div className="sm:col-span-2">
-                                <StatCard value="+25" label="Anos de Experiência" />
+                                <StatCard value={stats[0].value} label={stats[0].label} />
                             </div>
-                            <StatCard value="+10M" label="Peças / Ano" />
-                            <StatCard value="IATF 16949" label="Certificação" />
+                            <StatCard value={stats[1].value} label={stats[1].label} />
+                            <StatCard value={stats[2].value} label={stats[2].label} />
                         </div>
                     </div>
 
                     <div className="mt-24">
-                        <h3 className="text-2xl font-bold text-center mb-10">A Nossa Trajetória em Imagens</h3>
+                        <h3 className="text-2xl font-bold text-center mb-10 text-black dark:text-white">A Nossa Trajetória em Imagens</h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            {galleryImages.map((image, index) => {
-                                const imageUrl = `https://picsum.photos/seed/${image.seed}/400/400`;
+                            {gallery.map((image, index) => {
+                                const imageUrl = image.imageUrl || `https://picsum.photos/seed/${image.seed}/400/400`;
                                 return (
                                     <button
                                         key={index}
                                         onClick={() => setSelectedImage(imageUrl)}
-                                        className="block aspect-square bg-gray-200 group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-yellow-400 overflow-hidden"
+                                        className="block aspect-square bg-gray-200 dark:bg-gray-800 group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-950 focus:ring-yellow-400 overflow-hidden"
                                         aria-label={`Ver imagem: ${image.alt}`}
                                     >
                                         <img

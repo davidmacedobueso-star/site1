@@ -7,6 +7,7 @@ import cors from 'cors';
 
 const PORT = 3000;
 const DATA_FILE = path.join(process.cwd(), 'data', 'products.json');
+const CONTENT_FILE = path.join(process.cwd(), 'data', 'content.json');
 const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
 
 // Ensure directories exist
@@ -16,6 +17,17 @@ if (!fs.existsSync(path.join(process.cwd(), 'data'))) {
 if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
+
+// Simulated token verification middleware
+const verifyToken = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const authHeader = req.headers.authorization;
+    const token = Array.isArray(authHeader) ? authHeader[0] : authHeader;
+    if (token === 'Bearer fake-jwt-token') {
+        next();
+    } else {
+        res.status(401).json({ success: false, message: 'Não autorizado' });
+    }
+};
 
 // Initial data if file doesn't exist
 if (!fs.existsSync(DATA_FILE)) {
@@ -108,6 +120,14 @@ async function startServer() {
         res.json(data);
     });
 
+    app.get('/api/content', (req, res) => {
+        if (!fs.existsSync(CONTENT_FILE)) {
+            return res.status(404).json({ success: false, message: 'Conteúdo não encontrado' });
+        }
+        const data = JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf-8'));
+        res.json(data);
+    });
+
     app.post('/api/admin/login', (req, res) => {
         const { username, password } = req.body;
         const adminUser = process.env.ADMIN_USERNAME || 'admin';
@@ -120,8 +140,7 @@ async function startServer() {
         }
     });
 
-    app.post('/api/admin/products', upload.single('image'), (req, res) => {
-        // In a real app, we'd verify the token here
+    app.post('/api/admin/products', verifyToken, upload.single('image'), (req, res) => {
         const { name, code, description, material, finishType, specs } = req.body;
         const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
 
@@ -143,10 +162,10 @@ async function startServer() {
         res.json({ success: true, product: newProduct });
     });
 
-    app.delete('/api/admin/products/:id', (req, res) => {
-        const { id } = req.params;
+    app.delete('/api/admin/products/:id', verifyToken, (req: express.Request, res: express.Response) => {
+        const id = req.params.id;
         const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
-        const filteredData = data.filter((p: any) => p.id !== parseInt(id));
+        const filteredData = data.filter((p: any) => p.id !== parseInt(id as string));
         
         if (data.length === filteredData.length) {
             return res.status(404).json({ success: false, message: 'Produto não encontrado' });
@@ -154,6 +173,36 @@ async function startServer() {
 
         fs.writeFileSync(DATA_FILE, JSON.stringify(filteredData, null, 2));
         res.json({ success: true });
+    });
+
+    app.post('/api/admin/content', verifyToken, (req, res) => {
+        const newContent = req.body;
+        fs.writeFileSync(CONTENT_FILE, JSON.stringify(newContent, null, 2));
+        res.json({ success: true });
+    });
+
+    app.post('/api/admin/upload', verifyToken, upload.single('image'), (req, res) => {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'Nenhum ficheiro enviado' });
+        }
+        res.json({ success: true, imageUrl: `/uploads/${req.file.filename}` });
+    });
+
+    // Contact form endpoint
+    app.post('/api/contact', upload.single('attachment'), (req, res) => {
+        const { name, email, subject, message } = req.body;
+        const file = req.file;
+
+        console.log(`Novo contacto recebido para geral@bueso.pt:`);
+        console.log(`De: ${name} <${email}>`);
+        console.log(`Assunto: ${subject}`);
+        console.log(`Mensagem: ${message}`);
+        if (file) {
+            console.log(`Anexo: ${file.filename}`);
+        }
+
+        // In a real scenario, we would use nodemailer or an email service here
+        res.json({ success: true, message: 'Mensagem enviada com sucesso para geral@bueso.pt' });
     });
 
     // Vite middleware for development
