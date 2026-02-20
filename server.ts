@@ -143,6 +143,19 @@ async function startServer() {
         res.json({ success: true, product: newProduct });
     });
 
+    app.delete('/api/admin/products/:id', (req, res) => {
+        const { id } = req.params;
+        const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
+        const filteredData = data.filter((p: any) => p.id !== parseInt(id));
+        
+        if (data.length === filteredData.length) {
+            return res.status(404).json({ success: false, message: 'Produto não encontrado' });
+        }
+
+        fs.writeFileSync(DATA_FILE, JSON.stringify(filteredData, null, 2));
+        res.json({ success: true });
+    });
+
     // Vite middleware for development
     if (process.env.NODE_ENV !== 'production') {
         const vite = await createViteServer({

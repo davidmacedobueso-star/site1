@@ -68,12 +68,13 @@ const Catalog: React.FC = () => {
                         <a href="#home" className="flex items-center justify-center px-4 py-2 bg-white border border-black text-black font-bold text-[10px] uppercase tracking-widest hover:bg-gray-100 transition">
                             <BackIcon /> Voltar
                         </a>
-                        <button 
-                            onClick={() => alert('O download do catálogo PDF estará disponível brevemente.')} 
+                        <a 
+                            href="/catalog.pdf" 
+                            download="Catalogo_Plasticos_Boeso.pdf"
                             className="flex items-center justify-center px-4 py-2 bg-yellow-400 text-black font-bold text-[10px] uppercase tracking-widest hover:bg-yellow-500 transition"
                         >
                             <DownloadIcon /> Catálogo PDF
-                        </button>
+                        </a>
                     </div>
                 </div>
 

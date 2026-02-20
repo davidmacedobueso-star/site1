@@ -74,7 +74,7 @@ function App() {
   return (
     <>
     <div className="bg-white text-black font-sans min-h-screen selection:bg-yellow-400 selection:text-black">
-      <Navbar onContactClick={() => setContactModalOpen(true)} />
+      <Navbar onContactClick={() => setContactModalOpen(true)} onAdminClick={() => setAdminModalOpen(true)} />
       {renderPage()}
       <Footer onContactClick={() => setContactModalOpen(true)} onAdminClick={() => setAdminModalOpen(true)} />
     </div>

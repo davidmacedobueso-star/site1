@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 interface NavbarProps {
     onContactClick: () => void;
+    onAdminClick: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
@@ -56,6 +57,13 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
                         }}
                         className="hover:underline"
                     >Contacto</button>
+                    <button 
+                        onClick={(e) => {
+                            e.preventDefault();
+                            onAdminClick();
+                        }}
+                        className="bg-black text-white px-3 py-1 text-[10px] uppercase font-bold tracking-widest hover:bg-gray-800 transition"
+                    >Gestão</button>
                 </div>
 
                 <button id="menu-btn" className="md:hidden text-black focus:outline-none z-[60] relative h-6 w-6" onClick={toggleMenu} aria-label={isMenuOpen ? "Fechar Menu" : "Abrir Menu"}>
@@ -91,6 +99,12 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
                          }}
                          className="mt-4 text-lg border border-black w-full py-3 text-center hover:bg-gray-100"
                          >Contacto</button>
+                         <button onClick={() => {
+                             onAdminClick();
+                             handleMobileLinkClick();
+                         }}
+                         className="mt-2 text-lg bg-black text-white w-full py-3 text-center hover:bg-gray-800"
+                         >Gestão</button>
                     </div>
                 </div>
             </div>

@@ -7,6 +7,9 @@ interface AdminPanelProps {
 
 const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [activeTab, setActiveTab] = useState<'add' | 'manage'>('add');
+    const [products, setProducts] = useState<any[]>([]);
+    const [isLoadingProducts, setIsLoadingProducts] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -20,6 +23,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
     const [specs, setSpecs] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const fetchProducts = async () => {
+        setIsLoadingProducts(true);
+        try {
+            const response = await fetch('/api/products');
+            const data = await response.json();
+            setProducts(data);
+        } catch (err) {
+            console.error('Error fetching products:', err);
+        } finally {
+            setIsLoadingProducts(false);
+        }
+    };
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -32,11 +48,31 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
             if (data.success) {
                 setIsLoggedIn(true);
                 setError('');
+                fetchProducts();
             } else {
                 setError(data.message);
             }
         } catch (err) {
             setError('Erro ao conectar ao servidor');
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (!confirm('Tem a certeza que deseja remover este produto?')) return;
+
+        try {
+            const response = await fetch(`/api/admin/products/${id}`, {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+            if (data.success) {
+                setProducts(products.filter(p => p.id !== id));
+                onProductAdded(); // Refresh catalog
+            } else {
+                alert('Erro ao remover produto');
+            }
+        } catch (err) {
+            alert('Erro ao conectar ao servidor');
         }
     };
 
@@ -119,107 +155,165 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
 
     return (
         <div className="p-6 max-h-[80vh] overflow-y-auto no-scrollbar">
-            <h2 className="text-2xl font-bold mb-6 uppercase tracking-widest">Adicionar Novo Produto</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Nome do Produto</label>
-                        <input 
-                            type="text" 
-                            value={name} 
-                            onChange={e => setName(e.target.value)}
-                            className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Código (Referência)</label>
-                        <input 
-                            type="text" 
-                            value={code} 
-                            onChange={e => setCode(e.target.value)}
-                            className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                            required
-                        />
-                    </div>
-                </div>
+            <div className="flex border-b border-gray-200 mb-6">
+                <button 
+                    onClick={() => setActiveTab('add')}
+                    className={`pb-2 px-4 text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === 'add' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
+                >
+                    Adicionar
+                </button>
+                <button 
+                    onClick={() => setActiveTab('manage')}
+                    className={`pb-2 px-4 text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === 'manage' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
+                >
+                    Gerir ({products.length})
+                </button>
+            </div>
 
-                <div>
-                    <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Descrição</label>
-                    <textarea 
-                        value={description} 
-                        onChange={e => setDescription(e.target.value)}
-                        className="w-full border border-gray-300 p-2 h-24 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                        required
-                    />
-                </div>
+            {activeTab === 'add' ? (
+                <>
+                    <h2 className="text-xl font-bold mb-6 uppercase tracking-widest">Novo Produto</h2>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Nome do Produto</label>
+                                <input 
+                                    type="text" 
+                                    value={name} 
+                                    onChange={e => setName(e.target.value)}
+                                    className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Código (Referência)</label>
+                                <input 
+                                    type="text" 
+                                    value={code} 
+                                    onChange={e => setCode(e.target.value)}
+                                    className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Material</label>
-                        <input 
-                            type="text" 
-                            value={material} 
-                            onChange={e => setMaterial(e.target.value)}
-                            className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Tipo de Acabamento</label>
-                        <select 
-                            value={finishType} 
-                            onChange={e => setFinishType(e.target.value)}
-                            className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                        <div>
+                            <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Descrição</label>
+                            <textarea 
+                                value={description} 
+                                onChange={e => setDescription(e.target.value)}
+                                className="w-full border border-gray-300 p-2 h-24 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                required
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Material</label>
+                                <input 
+                                    type="text" 
+                                    value={material} 
+                                    onChange={e => setMaterial(e.target.value)}
+                                    className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Tipo de Acabamento</label>
+                                <select 
+                                    value={finishType} 
+                                    onChange={e => setFinishType(e.target.value)}
+                                    className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                >
+                                    <option value="Injeção">Injeção</option>
+                                    <option value="Cromagem">Cromagem</option>
+                                    <option value="Pintura">Pintura</option>
+                                    <option value="Metalização">Metalização</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Especificações (uma por linha)</label>
+                            <textarea 
+                                value={specs} 
+                                onChange={e => setSpecs(e.target.value)}
+                                placeholder="Ex: Material: ABS&#10;Resistência: 100°C"
+                                className="w-full border border-gray-300 p-2 h-24 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Imagem do Produto</label>
+                            <input 
+                                type="file" 
+                                accept="image/*"
+                                onChange={e => setImage(e.target.files ? e.target.files[0] : null)}
+                                className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                required
+                            />
+                        </div>
+
+                        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+                        <div className="flex space-x-4 pt-4">
+                            <button 
+                                type="button"
+                                onClick={onClose}
+                                className="flex-1 border border-black text-black font-bold py-3 uppercase tracking-widest hover:bg-gray-100 transition"
+                            >
+                                Cancelar
+                            </button>
+                            <button 
+                                type="submit" 
+                                disabled={isSubmitting}
+                                className="flex-1 bg-yellow-400 text-black font-bold py-3 uppercase tracking-widest hover:bg-yellow-500 transition disabled:opacity-50"
+                            >
+                                {isSubmitting ? 'A guardar...' : 'Adicionar Produto'}
+                            </button>
+                        </div>
+                    </form>
+                </>
+            ) : (
+                <div className="space-y-4">
+                    <h2 className="text-xl font-bold mb-6 uppercase tracking-widest">Gestão de Produtos</h2>
+                    {isLoadingProducts ? (
+                        <p className="text-center py-8">A carregar produtos...</p>
+                    ) : products.length === 0 ? (
+                        <p className="text-center py-8 text-gray-500">Nenhum produto encontrado.</p>
+                    ) : (
+                        <div className="divide-y divide-gray-200">
+                            {products.map(product => (
+                                <div key={product.id} className="py-4 flex items-center justify-between">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-12 h-12 bg-gray-100 border border-gray-200 overflow-hidden">
+                                            <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500 uppercase">{product.code}</p>
+                                            <h4 className="font-bold text-sm">{product.name}</h4>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => handleDelete(product.id)}
+                                        className="text-red-500 hover:text-red-700 text-xs font-bold uppercase tracking-widest"
+                                    >
+                                        Remover
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <div className="pt-6">
+                        <button 
+                            onClick={onClose}
+                            className="w-full border border-black text-black font-bold py-3 uppercase tracking-widest hover:bg-gray-100 transition"
                         >
-                            <option value="Injeção">Injeção</option>
-                            <option value="Cromagem">Cromagem</option>
-                            <option value="Pintura">Pintura</option>
-                            <option value="Metalização">Metalização</option>
-                        </select>
+                            Fechar
+                        </button>
                     </div>
                 </div>
-
-                <div>
-                    <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Especificações (uma por linha)</label>
-                    <textarea 
-                        value={specs} 
-                        onChange={e => setSpecs(e.target.value)}
-                        placeholder="Ex: Material: ABS&#10;Resistência: 100°C"
-                        className="w-full border border-gray-300 p-2 h-24 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Imagem do Produto</label>
-                    <input 
-                        type="file" 
-                        accept="image/*"
-                        onChange={e => setImage(e.target.files ? e.target.files[0] : null)}
-                        className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                        required
-                    />
-                </div>
-
-                {error && <p className="text-red-500 text-sm">{error}</p>}
-
-                <div className="flex space-x-4 pt-4">
-                    <button 
-                        type="button"
-                        onClick={onClose}
-                        className="flex-1 border border-black text-black font-bold py-3 uppercase tracking-widest hover:bg-gray-100 transition"
-                    >
-                        Cancelar
-                    </button>
-                    <button 
-                        type="submit" 
-                        disabled={isSubmitting}
-                        className="flex-1 bg-yellow-400 text-black font-bold py-3 uppercase tracking-widest hover:bg-yellow-500 transition disabled:opacity-50"
-                    >
-                        {isSubmitting ? 'A guardar...' : 'Adicionar Produto'}
-                    </button>
-                </div>
-            </form>
+            )}
         </div>
     );
 };
