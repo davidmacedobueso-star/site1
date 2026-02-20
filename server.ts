@@ -147,6 +147,16 @@ async function startServer() {
         res.json({ success: true });
     });
 
+    app.post('/api/contact', upload.single('attachment'), (req, res) => {
+        const { name, email, subject, message } = req.body;
+        const attachment = req.file ? `/uploads/${req.file.filename}` : null;
+
+        console.log('Novo contacto recebido:', { name, email, subject, message, attachment });
+        
+        // In a real app, we would save this to a database or send an email
+        res.json({ success: true, message: 'Mensagem enviada com sucesso' });
+    });
+
     app.post('/api/admin/login', (req, res) => {
         const { username, password } = req.body;
         const adminUser = process.env.ADMIN_USERNAME || 'admin';
