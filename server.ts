@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import cors from 'cors';
 
-const PORT = 3000;
+const PORT = process.env.PORT || 8080;
 const DATA_FILE = path.join(process.cwd(), 'data', 'products.json');
 const CONTENT_FILE = path.join(process.cwd(), 'data', 'content.json');
 const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
@@ -150,7 +150,7 @@ async function startServer() {
     app.post('/api/admin/login', (req, res) => {
         const { username, password } = req.body;
         const adminUser = process.env.ADMIN_USERNAME || 'admin';
-        const adminPass = process.env.ADMIN_PASSWORD || 'boeso2024';
+        const adminPass = process.env.ADMIN_PASSWORD || 'bueso2024##';
 
         if (username === adminUser && password === adminPass) {
             res.json({ success: true, token: 'fake-jwt-token' });
@@ -210,7 +210,7 @@ async function startServer() {
     }
 
     app.listen(PORT, '0.0.0.0', () => {
-        console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
     });
 }
 
