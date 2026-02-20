@@ -16,19 +16,11 @@ const faqData = [
     }
 ];
 
-interface FAQProps {
-    content?: {
-        title: string;
-    };
-}
-
-const FAQ: React.FC<FAQProps> = ({ content }) => {
-    const title = content?.title || "Questões Recentes";
-
+const FAQ: React.FC = () => {
     return (
-        <section id="faq" className="py-24 bg-neutral-100 dark:bg-gray-900 transition-colors duration-300">
+        <section id="faq" className="py-24 bg-neutral-100">
             <div className="max-w-3xl mx-auto px-6">
-                <h2 className="text-center text-2xl font-bold uppercase tracking-wider mb-12 text-black dark:text-white">{title}</h2>
+                <h2 className="text-center text-2xl font-bold uppercase tracking-wider mb-12">Questões Recentes</h2>
                 <div className="space-y-4">
                     {faqData.map((item, index) => (
                         <FAQItem key={index} question={item.question} answer={item.answer} />

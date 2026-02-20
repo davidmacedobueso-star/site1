@@ -50,26 +50,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description, onD
 
 interface ServicesProps {
     onContactClick: () => void;
-    content?: {
-        title: string;
-        subtitle: string;
-        ctaTitle: string;
-        ctaSubtitle: string;
-        images?: {
-            injection?: string;
-            vacuum?: string;
-            chrome?: string;
-        };
-    };
 }
 
-const Services: React.FC<ServicesProps> = ({ onContactClick, content }) => {
+const Services: React.FC<ServicesProps> = ({ onContactClick }) => {
     const [selectedService, setSelectedService] = useState<Service | null>(null);
-
-    const title = content?.title || "Serviços de Precisão";
-    const subtitle = content?.subtitle || "Do molde à peça final, garantimos qualidade e acabamentos de excelência que elevam o seu produto.";
-    const ctaTitle = content?.ctaTitle || "Tem um Projeto Específico?";
-    const ctaSubtitle = content?.ctaSubtitle || "A nossa equipa técnica está pronta para analisar os seus requisitos e propor a melhor solução.";
 
     const serviceIcons: { [key: string]: React.ReactNode } = {
         injection: <InjectionIcon />,
@@ -78,18 +62,18 @@ const Services: React.FC<ServicesProps> = ({ onContactClick, content }) => {
     };
 
     const serviceImages: { [key: string]: string } = {
-        injection: content?.images?.injection || 'https://picsum.photos/seed/injection-process/800/450',
-        vacuum: content?.images?.vacuum || 'https://picsum.photos/seed/vacuum-chamber/800/450',
-        chrome: content?.images?.chrome || 'https://picsum.photos/seed/chrome-plating-line/800/450',
+        injection: 'https://picsum.photos/seed/injection-process/800/450',
+        vacuum: 'https://picsum.photos/seed/vacuum-chamber/800/450',
+        chrome: 'https://picsum.photos/seed/chrome-plating-line/800/450',
     };
 
     return (
         <>
-        <section id="servicos" className="py-24 px-6 bg-white dark:bg-gray-950 transition-colors duration-300">
+        <section id="servicos" className="py-24 px-6 bg-white">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16">
-                     <h2 className="text-3xl font-bold mb-3 text-black dark:text-white">{title}</h2>
-                     <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{subtitle}</p>
+                     <h2 className="text-3xl font-bold mb-3">Serviços de Precisão</h2>
+                     <p className="text-gray-600 max-w-2xl mx-auto">Do molde à peça final, garantimos qualidade e acabamentos de excelência que elevam o seu produto.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                     {servicesData.map(service => (
@@ -101,9 +85,9 @@ const Services: React.FC<ServicesProps> = ({ onContactClick, content }) => {
                             onDetailsClick={() => setSelectedService(service)}
                         />
                     ))}
-                    <div className="bg-gray-50 dark:bg-gray-900 p-8 h-full flex flex-col justify-center items-center text-center border border-dashed border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <h3 className="text-xl font-bold mb-3 text-black dark:text-white">{ctaTitle}</h3>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">{ctaSubtitle}</p>
+                    <div className="bg-gray-50 p-8 h-full flex flex-col justify-center items-center text-center border border-dashed border-gray-300 hover:bg-gray-100 transition-colors">
+                        <h3 className="text-xl font-bold mb-3">Tem um Projeto Específico?</h3>
+                        <p className="text-gray-600 text-sm mb-6">A nossa equipa técnica está pronta para analisar os seus requisitos e propor a melhor solução.</p>
                         <button onClick={onContactClick} className="w-fit px-8 py-3 bg-yellow-400 text-black font-bold text-xs uppercase hover:bg-yellow-500 transition shadow-md">Fale Connosco</button>
                     </div>
                 </div>

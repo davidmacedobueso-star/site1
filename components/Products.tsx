@@ -5,20 +5,10 @@ import { productsData } from '../data/productsData';
 import type { DetailedProduct } from '../data/productsData';
 
 
-interface ProductsProps {
-    content?: {
-        title: string;
-        subtitle: string;
-    };
-}
-
-const Products: React.FC<ProductsProps> = ({ content }) => {
+const Products: React.FC = () => {
     const carouselRef = useRef<HTMLDivElement>(null);
     const [selectedProduct, setSelectedProduct] = useState<DetailedProduct | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-    const title = content?.title || "Produtos em Destaque";
-    const subtitle = content?.subtitle || "Excelência técnica em cada componente produzido.";
 
     const scroll = (direction: 'left' | 'right') => {
         if (carouselRef.current) {
@@ -52,14 +42,14 @@ const Products: React.FC<ProductsProps> = ({ content }) => {
 
     return (
         <>
-        <section id="produtos" className="py-24 bg-neutral-100 dark:bg-gray-900 transition-colors duration-300">
+        <section id="produtos" className="py-24 bg-neutral-100">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold uppercase tracking-wider text-black dark:text-white">{title}</h2>
-                    <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-2xl mx-auto">{subtitle}</p>
+                    <h2 className="text-3xl font-bold uppercase tracking-wider">Produtos em Destaque</h2>
+                    <p className="text-gray-500 mt-2 max-w-2xl mx-auto">Excelência técnica em cada componente produzido.</p>
                     <div className="flex justify-center space-x-2 mt-6">
-                        <button onClick={() => scroll('left')} className="px-4 py-2 bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition text-lg rounded-full">←</button>
-                        <button onClick={() => scroll('right')} className="px-4 py-2 bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition text-lg rounded-full">→</button>
+                        <button onClick={() => scroll('left')} className="px-4 py-2 bg-white shadow-sm border border-gray-200 text-black hover:bg-gray-50 transition text-lg rounded-full">←</button>
+                        <button onClick={() => scroll('right')} className="px-4 py-2 bg-white shadow-sm border border-gray-200 text-black hover:bg-gray-50 transition text-lg rounded-full">→</button>
                     </div>
                 </div>
 

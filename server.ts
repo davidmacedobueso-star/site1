@@ -18,16 +18,27 @@ if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
-// Simulated token verification middleware
-const verifyToken = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const authHeader = req.headers.authorization;
-    const token = Array.isArray(authHeader) ? authHeader[0] : authHeader;
-    if (token === 'Bearer fake-jwt-token') {
-        next();
-    } else {
-        res.status(401).json({ success: false, message: 'Não autorizado' });
-    }
-};
+// Initial content if file doesn't exist
+if (!fs.existsSync(CONTENT_FILE)) {
+    const initialContent = {
+        header: {
+            title: "Injetor e Acabamentos \nPremium em Braga",
+            subtitle: "Soluções integradas de metalização e pintura para a indústria exigente."
+        },
+        about: {
+            title: "A Nossa História de Precisão",
+            subtitle: "Fundada no coração industrial de Braga, a nossa paixão é transformar polímeros em componentes de alta performance.",
+            content1: "Desde a nossa fundação, a Plásticos Boeso tem sido um pilar de inovação e qualidade na indústria de injeção de plásticos. Nascemos com a missão de fornecer soluções técnicas para os setores mais exigentes, com um foco especial na indústria automóvel.",
+            content2: "A nossa filosofia assenta em três pilares: precisão absoluta, tecnologia de ponta e uma parceria próxima com os nossos clientes. Cada peça que produzimos é o resultado de um processo meticuloso, desde a seleção do material até ao acabamento final, seja ele uma metalização sofisticada ou uma cromagem de elevada resistência."
+        },
+        cta: {
+            title: "SUBSCREVA A NEWSLETTER",
+            subtitle: "Aproveite 15% de desconto na primeira compra.",
+            buttonText: "Subscrever"
+        }
+    };
+    fs.writeFileSync(CONTENT_FILE, JSON.stringify(initialContent, null, 2));
+}
 
 // Initial data if file doesn't exist
 if (!fs.existsSync(DATA_FILE)) {
@@ -121,11 +132,19 @@ async function startServer() {
     });
 
     app.get('/api/content', (req, res) => {
-        if (!fs.existsSync(CONTENT_FILE)) {
-            return res.status(404).json({ success: false, message: 'Conteúdo não encontrado' });
+        if (fs.existsSync(CONTENT_FILE)) {
+            const data = JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf-8'));
+            res.json(data);
+        } else {
+            res.status(404).json({ message: 'Content not found' });
         }
-        const data = JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf-8'));
-        res.json(data);
+    });
+
+    app.post('/api/admin/content', (req, res) => {
+        // In a real app, we'd verify the token here
+        const content = req.body;
+        fs.writeFileSync(CONTENT_FILE, JSON.stringify(content, null, 2));
+        res.json({ success: true });
     });
 
     app.post('/api/admin/login', (req, res) => {
@@ -140,7 +159,8 @@ async function startServer() {
         }
     });
 
-    app.post('/api/admin/products', verifyToken, upload.single('image'), (req, res) => {
+    app.post('/api/admin/products', upload.single('image'), (req, res) => {
+        // In a real app, we'd verify the token here
         const { name, code, description, material, finishType, specs } = req.body;
         const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
 
@@ -162,10 +182,10 @@ async function startServer() {
         res.json({ success: true, product: newProduct });
     });
 
-    app.delete('/api/admin/products/:id', verifyToken, (req: express.Request, res: express.Response) => {
-        const id = req.params.id;
+    app.delete('/api/admin/products/:id', (req, res) => {
+        const { id } = req.params;
         const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
-        const filteredData = data.filter((p: any) => p.id !== parseInt(id as string));
+        const filteredData = data.filter((p: any) => p.id !== parseInt(id));
         
         if (data.length === filteredData.length) {
             return res.status(404).json({ success: false, message: 'Produto não encontrado' });
@@ -173,36 +193,6 @@ async function startServer() {
 
         fs.writeFileSync(DATA_FILE, JSON.stringify(filteredData, null, 2));
         res.json({ success: true });
-    });
-
-    app.post('/api/admin/content', verifyToken, (req, res) => {
-        const newContent = req.body;
-        fs.writeFileSync(CONTENT_FILE, JSON.stringify(newContent, null, 2));
-        res.json({ success: true });
-    });
-
-    app.post('/api/admin/upload', verifyToken, upload.single('image'), (req, res) => {
-        if (!req.file) {
-            return res.status(400).json({ success: false, message: 'Nenhum ficheiro enviado' });
-        }
-        res.json({ success: true, imageUrl: `/uploads/${req.file.filename}` });
-    });
-
-    // Contact form endpoint
-    app.post('/api/contact', upload.single('attachment'), (req, res) => {
-        const { name, email, subject, message } = req.body;
-        const file = req.file;
-
-        console.log(`Novo contacto recebido para geral@bueso.pt:`);
-        console.log(`De: ${name} <${email}>`);
-        console.log(`Assunto: ${subject}`);
-        console.log(`Mensagem: ${message}`);
-        if (file) {
-            console.log(`Anexo: ${file.filename}`);
-        }
-
-        // In a real scenario, we would use nodemailer or an email service here
-        res.json({ success: true, message: 'Mensagem enviada com sucesso para geral@bueso.pt' });
     });
 
     // Vite middleware for development

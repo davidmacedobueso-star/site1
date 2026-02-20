@@ -57,15 +57,15 @@ const Catalog: React.FC = () => {
     });
 
     return (
-        <main className="pt-24 pb-20 bg-white dark:bg-gray-950 min-h-screen transition-colors duration-300">
+        <main className="pt-24 pb-20 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="flex flex-col md:flex-row justify-between md:items-center border-b border-gray-200 dark:border-gray-800 pb-8 mb-8">
+                <div className="flex flex-col md:flex-row justify-between md:items-center border-b border-gray-200 pb-8 mb-8">
                     <div>
-                        <h1 className="text-4xl font-bold text-black dark:text-white">Catálogo de Produtos</h1>
-                        <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm uppercase tracking-widest">Soluções standard e customizadas</p>
+                        <h1 className="text-4xl font-bold">Catálogo de Produtos</h1>
+                        <p className="text-gray-500 mt-2 text-sm uppercase tracking-widest">Soluções standard e customizadas</p>
                     </div>
                     <div className="flex space-x-2 mt-6 md:mt-0">
-                        <a href="#home" className="flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-900 border border-black dark:border-gray-700 text-black dark:text-white font-bold text-[10px] uppercase tracking-widest hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                        <a href="#home" className="flex items-center justify-center px-4 py-2 bg-white border border-black text-black font-bold text-[10px] uppercase tracking-widest hover:bg-gray-100 transition">
                             <BackIcon /> Voltar
                         </a>
                         <a 
@@ -81,28 +81,28 @@ const Catalog: React.FC = () => {
                 {/* Filters */}
                 <div className="flex flex-col md:flex-row gap-4 mb-12">
                     <div className="w-full md:w-1/2 lg:w-1/4">
-                        <label htmlFor="material-filter" className="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Filtrar por Material</label>
+                        <label htmlFor="material-filter" className="block text-xs font-semibold uppercase text-gray-500 mb-1">Filtrar por Material</label>
                         <select 
                             id="material-filter" 
                             value={materialFilter} 
                             onChange={e => setMaterialFilter(e.target.value)} 
-                            className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 p-2 text-sm text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            className="w-full bg-white border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         >
                             {materials.map(mat => (
-                                <option key={mat} value={mat} className="bg-white dark:bg-gray-900">{mat === 'all' ? 'Todos os Materiais' : mat}</option>
+                                <option key={mat} value={mat}>{mat === 'all' ? 'Todos os Materiais' : mat}</option>
                             ))}
                         </select>
                     </div>
                      <div className="w-full md:w-1/2 lg:w-1/4">
-                        <label htmlFor="finish-filter" className="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Filtrar por Acabamento</label>
+                        <label htmlFor="finish-filter" className="block text-xs font-semibold uppercase text-gray-500 mb-1">Filtrar por Acabamento</label>
                         <select 
                             id="finish-filter" 
                             value={finishFilter} 
                             onChange={e => setFinishFilter(e.target.value)} 
-                            className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 p-2 text-sm text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            className="w-full bg-white border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         >
                             {finishTypes.map(finish => (
-                                <option key={finish} value={finish} className="bg-white dark:bg-gray-900">{finish === 'all' ? 'Todos os Acabamentos' : finish}</option>
+                                <option key={finish} value={finish}>{finish === 'all' ? 'Todos os Acabamentos' : finish}</option>
                             ))}
                         </select>
                     </div>
@@ -111,7 +111,7 @@ const Catalog: React.FC = () => {
                 {loading ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
                         {[...Array(8)].map((_, i) => (
-                            <div key={i} className="bg-gray-100 dark:bg-gray-900 animate-pulse h-64 border border-gray-200 dark:border-gray-800"></div>
+                            <div key={i} className="bg-gray-100 animate-pulse h-64 border border-gray-200"></div>
                         ))}
                     </div>
                 ) : filteredProducts.length > 0 ? (
@@ -121,9 +121,9 @@ const Catalog: React.FC = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-16 bg-gray-50 dark:bg-gray-900/50">
-                        <h3 className="text-lg font-semibold text-black dark:text-white">Nenhum produto encontrado</h3>
-                        <p className="text-gray-600 dark:text-gray-400 mt-2">Tente ajustar os filtros para encontrar o que procura.</p>
+                    <div className="text-center py-16 bg-gray-50">
+                        <h3 className="text-lg font-semibold text-black">Nenhum produto encontrado</h3>
+                        <p className="text-gray-600 mt-2">Tente ajustar os filtros para encontrar o que procura.</p>
                     </div>
                 )}
             </div>

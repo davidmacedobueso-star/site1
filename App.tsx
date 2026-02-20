@@ -17,39 +17,6 @@ function App() {
   const [route, setRoute] = useState(window.location.hash);
   const [isContactModalOpen, setContactModalOpen] = useState(false);
   const [isAdminModalOpen, setAdminModalOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [siteContent, setSiteContent] = useState<any>(null);
-
-  const fetchContent = async () => {
-    try {
-      const response = await fetch('/api/content');
-      const data = await response.json();
-      setSiteContent(data);
-    } catch (err) {
-      console.error('Error fetching content:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchContent();
-  }, []);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      setIsDarkMode(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDarkMode]);
 
 
   useEffect(() => {
@@ -93,26 +60,21 @@ function App() {
     
     return (
       <main id="home">
-        <Header content={siteContent?.header} />
-        <Products content={siteContent?.products} />
-        <Services onContactClick={() => setContactModalOpen(true)} content={siteContent?.services} />
-        <CTA content={siteContent?.cta} />
-        <Environment content={siteContent?.environment} />
-        <AboutUs content={siteContent?.about} />
-        <FAQ content={siteContent?.faq} />
+        <Header />
+        <Products />
+        <Services onContactClick={() => setContactModalOpen(true)} />
+        <CTA />
+        <Environment />
+        <AboutUs />
+        <FAQ />
       </main>
     );
   };
 
   return (
     <>
-    <div className={`font-sans min-h-screen selection:bg-yellow-400 selection:text-black transition-colors duration-300 ${isDarkMode ? 'bg-gray-950 text-white' : 'bg-white text-black'}`}>
-      <Navbar 
-        onContactClick={() => setContactModalOpen(true)} 
-        onAdminClick={() => setAdminModalOpen(true)} 
-        isDarkMode={isDarkMode}
-        toggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-      />
+    <div className="bg-white text-black font-sans min-h-screen selection:bg-yellow-400 selection:text-black">
+      <Navbar onContactClick={() => setContactModalOpen(true)} onAdminClick={() => setAdminModalOpen(true)} />
       {renderPage()}
       <Footer onContactClick={() => setContactModalOpen(true)} onAdminClick={() => setAdminModalOpen(true)} />
     </div>
@@ -126,7 +88,7 @@ function App() {
           if (window.location.hash === '#catalogo') {
             window.location.reload();
           }
-        }} onContentUpdated={fetchContent} />
+        }} />
     </Modal>
     </>
   );
