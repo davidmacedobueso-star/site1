@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import Modal from './Modal';
 
 const StatCard: React.FC<{ value: string; label: string }> = ({ value, label }) => (
-    <div className="bg-[#1a1a1a] p-6 rounded-xl border border-white/5">
-        <p className="text-4xl font-bold text-sky-400 mb-2">{value}</p>
-        <p className="text-xs uppercase tracking-widest text-gray-500">{label}</p>
+    <div className="bg-gray-50 p-6 border border-gray-100 text-center hover:bg-white hover:shadow-lg transition-all duration-300">
+        <p className="text-4xl font-bold text-black mb-2">{value}</p>
+        <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">{label}</p>
     </div>
 );
 
@@ -20,33 +20,35 @@ const AboutUs: React.FC = () => {
 
     return (
         <>
-            <section id="sobre" className="py-20 bg-[#0f0f0f]">
+            <section id="sobre" className="py-24 bg-white">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold mb-3">A Nossa História de Precisão</h2>
-                        <p className="text-gray-500 max-w-2xl mx-auto">Fundada no coração industrial de Braga, a nossa paixão é transformar polímeros em componentes de alta performance.</p>
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-bold mb-4">A Nossa História de Precisão</h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto text-lg">Fundada no coração industrial de Braga, a nossa paixão é transformar polímeros em componentes de alta performance.</p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-12 items-center">
-                        <div className="space-y-4 text-gray-400 text-sm leading-relaxed">
+                    <div className="grid md:grid-cols-2 gap-16 items-center">
+                        <div className="space-y-6 text-gray-700 text-base leading-relaxed">
                             <p>
                                 Desde a nossa fundação, a Plásticos Boeso tem sido um pilar de inovação e qualidade na indústria de injeção de plásticos. Nascemos com a missão de fornecer soluções técnicas para os setores mais exigentes, com um foco especial na indústria automóvel.
                             </p>
                             <p>
                                 A nossa filosofia assenta em três pilares: precisão absoluta, tecnologia de ponta e uma parceria próxima com os nossos clientes. Cada peça que produzimos é o resultado de um processo meticuloso, desde a seleção do material até ao acabamento final, seja ele uma metalização sofisticada ou uma cromagem de elevada resistência.
                             </p>
-                            <p>
-                                Investimos continuamente em equipamentos de última geração e na formação da nossa equipa para garantir que estamos sempre um passo à frente, prontos para superar os desafios do futuro.
-                            </p>
+                            <div className="pt-4">
+                                <span className="inline-block h-1 w-20 bg-yellow-400"></span>
+                            </div>
                         </div>
-                        <div className="grid grid-cols-1 gap-6">
-                            <StatCard value="+25" label="Anos de Experiência" />
-                            <StatCard value="+10M" label="Peças Produzidas Anualmente" />
-                            <StatCard value="IATF 16949" label="Certificação de Qualidade" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div className="sm:col-span-2">
+                                <StatCard value="+25" label="Anos de Experiência" />
+                            </div>
+                            <StatCard value="+10M" label="Peças / Ano" />
+                            <StatCard value="IATF 16949" label="Certificação" />
                         </div>
                     </div>
 
-                    <div className="mt-20">
+                    <div className="mt-24">
                         <h3 className="text-2xl font-bold text-center mb-10">A Nossa Trajetória em Imagens</h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             {galleryImages.map((image, index) => {
@@ -55,13 +57,13 @@ const AboutUs: React.FC = () => {
                                     <button
                                         key={index}
                                         onClick={() => setSelectedImage(imageUrl)}
-                                        className="block aspect-square bg-[#1a1a1a] rounded-lg overflow-hidden group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0f0f0f] focus:ring-sky-400"
+                                        className="block aspect-square bg-gray-200 group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-yellow-400 overflow-hidden"
                                         aria-label={`Ver imagem: ${image.alt}`}
                                     >
                                         <img
                                             src={imageUrl}
                                             alt={image.alt}
-                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0"
                                             loading="lazy"
                                             decoding="async"
                                         />
@@ -78,7 +80,7 @@ const AboutUs: React.FC = () => {
                     <img 
                         src={selectedImage.replace('/400/400', '/1200/800')}
                         alt="Vista ampliada da galeria" 
-                        className="w-full h-auto object-contain max-h-[90vh] rounded-2xl"
+                        className="w-full h-auto object-contain max-h-[90vh]"
                     />
                 )}
             </Modal>

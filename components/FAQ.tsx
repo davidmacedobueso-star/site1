@@ -18,12 +18,14 @@ const faqData = [
 
 const FAQ: React.FC = () => {
     return (
-        <section id="faq" className="py-20 max-w-3xl mx-auto px-6">
-            <h2 className="text-center text-2xl font-bold mb-10">Questões Recentes</h2>
-            <div className="space-y-3">
-                {faqData.map((item, index) => (
-                    <FAQItem key={index} question={item.question} answer={item.answer} />
-                ))}
+        <section id="faq" className="py-24 bg-neutral-100">
+            <div className="max-w-3xl mx-auto px-6">
+                <h2 className="text-center text-2xl font-bold uppercase tracking-wider mb-12">Questões Recentes</h2>
+                <div className="space-y-4">
+                    {faqData.map((item, index) => (
+                        <FAQItem key={index} question={item.question} answer={item.answer} />
+                    ))}
+                </div>
             </div>
         </section>
     );

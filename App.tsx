@@ -11,10 +11,12 @@ import Footer from './components/Footer';
 import Catalog from './pages/Catalog';
 import Modal from './components/Modal';
 import ContactForm from './components/ContactForm';
+import AdminPanel from './components/AdminPanel';
 
 function App() {
   const [route, setRoute] = useState(window.location.hash);
   const [isContactModalOpen, setContactModalOpen] = useState(false);
+  const [isAdminModalOpen, setAdminModalOpen] = useState(false);
 
 
   useEffect(() => {
@@ -71,13 +73,22 @@ function App() {
 
   return (
     <>
-    <div className="bg-[#0f0f0f] text-gray-200 font-sans min-h-screen selection:bg-sky-400 selection:text-black">
+    <div className="bg-white text-black font-sans min-h-screen selection:bg-yellow-400 selection:text-black">
       <Navbar onContactClick={() => setContactModalOpen(true)} />
       {renderPage()}
-      <Footer onContactClick={() => setContactModalOpen(true)} />
+      <Footer onContactClick={() => setContactModalOpen(true)} onAdminClick={() => setAdminModalOpen(true)} />
     </div>
     <Modal isOpen={isContactModalOpen} onClose={() => setContactModalOpen(false)}>
         <ContactForm onClose={() => setContactModalOpen(false)} />
+    </Modal>
+    <Modal isOpen={isAdminModalOpen} onClose={() => setAdminModalOpen(false)}>
+        <AdminPanel onClose={() => setAdminModalOpen(false)} onProductAdded={() => {
+          // If we are on catalog page, we might want to refresh, but Catalog fetches on mount
+          // and we can force a refresh if needed by changing a key or just letting the user navigate
+          if (window.location.hash === '#catalogo') {
+            window.location.reload();
+          }
+        }} />
     </Modal>
     </>
   );

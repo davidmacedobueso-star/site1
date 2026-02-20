@@ -8,25 +8,29 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ title, description, onClick }) => {
     return (
-        <div className="min-w-[300px] md:min-w-[350px] snap-start group">
-            <div className="aspect-square bg-[#1a1a1a] border border-white/5 rounded-2xl mb-4 overflow-hidden relative">
+        <div className="flex flex-col flex-shrink-0 w-[280px] snap-start text-center group cursor-pointer" onClick={onClick}>
+            <div className="bg-gray-200 mb-4 overflow-hidden aspect-[4/3] relative">
                 <img 
-                    src={`https://picsum.photos/seed/${title}/350/350`} 
+                    src={`https://picsum.photos/seed/${title}/400/300`} 
                     alt={title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
                     decoding="async"
                 />
-                <div className="absolute inset-0 bg-sky-400/10 opacity-0 group-hover:opacity-100 transition"></div>
             </div>
-            <h3 className="font-bold">{title}</h3>
-            <p className="text-sm text-gray-500 mb-4">{description}</p>
-            <button 
-                onClick={onClick} 
-                className="inline-block text-xs font-bold uppercase tracking-widest text-sky-400 border-b border-sky-400 hover:text-white transition"
-            >
-                Saber Mais
-            </button>
+            
+            <div className="flex-grow px-1">
+                <h3 className="font-bold text-base group-hover:text-yellow-600 transition-colors">{title}</h3>
+                <p className="text-sm text-gray-600 my-2">{description}</p>
+            </div>
+
+            <div className="pt-2 pb-1">
+                <button 
+                    className="inline-block text-xs font-bold uppercase tracking-wider text-black border-b border-black group-hover:border-yellow-600 group-hover:text-yellow-600 transition"
+                >
+                    Saber Mais
+                </button>
+            </div>
         </div>
     );
 };

@@ -7,14 +7,14 @@ interface FAQItemProps {
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
     return (
-        <details className="group bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] backdrop-blur-[10px] p-4 rounded-lg cursor-pointer">
-            <summary className="flex justify-between items-center text-sm font-semibold uppercase tracking-tight list-none">
+        <details className="group bg-white border border-gray-200 p-4 cursor-pointer">
+            <summary className="flex justify-between items-center font-semibold list-none">
                 {question}
-                <span className="text-sky-400 transition-transform duration-300 group-open:rotate-45">
+                <span className="transition-transform duration-300 group-open:rotate-45 text-xl font-light">
                     +
                 </span>
             </summary>
-            <p className="mt-4 text-gray-500 text-sm leading-relaxed">
+            <p className="mt-4 text-gray-600 text-sm leading-relaxed">
                 {answer}
             </p>
         </details>

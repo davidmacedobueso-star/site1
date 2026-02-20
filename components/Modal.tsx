@@ -19,18 +19,18 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, size = 'md', p
 
     return (
         <div 
-            className="fixed inset-0 bg-black bg-opacity-70 z-[100] flex justify-center items-center p-4 transition-opacity duration-300"
+            className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex justify-center items-center p-4 transition-opacity duration-300"
             onClick={onClose}
             aria-modal="true"
             role="dialog"
         >
             <div 
-                className={`bg-[#161616] border border-white/10 rounded-2xl shadow-xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto relative animate-fade-in-up`}
+                className={`bg-white shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto relative animate-fade-in-up`}
                 onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
             >
                 <button 
                     onClick={onClose} 
-                    className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors z-10 bg-black/30 backdrop-blur-sm rounded-full p-1"
+                    className="absolute top-3 right-3 text-gray-500 hover:text-black transition-colors z-10 rounded-full p-1"
                     aria-label="Fechar modal"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
