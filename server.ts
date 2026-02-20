@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import cors from 'cors';
 
-const PORT = process.env.PORT || 8080;
+const PORT = 3000;
 const DATA_FILE = path.join(process.cwd(), 'data', 'products.json');
 const CONTENT_FILE = path.join(process.cwd(), 'data', 'content.json');
 const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');

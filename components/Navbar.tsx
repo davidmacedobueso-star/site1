@@ -42,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
                 <div className="text-xl font-bold tracking-tighter">
                     <a href="#home" className="flex items-center gap-2 text-black">
                         <span>PLÁSTICOS</span> 
-                        <span>BOESO</span>
+                        <span>BUESO</span>
                     </a>
                 </div>
                 
