@@ -394,6 +394,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
                                         className="w-full border border-gray-300 p-2 text-sm h-20 focus:ring-2 focus:ring-yellow-400 outline-none"
                                     />
                                 </div>
+                                <div>
+                                    <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1">URL da Imagem de Destaque</label>
+                                    <input 
+                                        type="text" 
+                                        value={content.header.imageUrl || ''} 
+                                        onChange={e => setContent({...content, header: {...content.header, imageUrl: e.target.value}})}
+                                        className="w-full border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+                                    />
+                                </div>
                             </div>
 
                             {/* About Section */}
@@ -432,6 +441,24 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
                                         className="w-full border border-gray-300 p-2 text-sm h-32 focus:ring-2 focus:ring-yellow-400 outline-none"
                                     />
                                 </div>
+                                <div className="space-y-4">
+                                    <h4 className="text-[10px] font-bold uppercase text-gray-400">Galeria (URLs das Imagens)</h4>
+                                    {(content.about.gallery || []).map((url: string, idx: number) => (
+                                        <div key={idx}>
+                                            <label className="block text-[9px] text-gray-400 mb-1">Imagem {idx + 1}</label>
+                                            <input 
+                                                type="text" 
+                                                value={url} 
+                                                onChange={e => {
+                                                    const newGallery = [...(content.about.gallery || [])];
+                                                    newGallery[idx] = e.target.value;
+                                                    setContent({...content, about: {...content.about, gallery: newGallery}});
+                                                }}
+                                                className="w-full border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* CTA Section */}
@@ -461,6 +488,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
                                         type="text" 
                                         value={content.cta.buttonText} 
                                         onChange={e => setContent({...content, cta: {...content.cta, buttonText: e.target.value}})}
+                                        className="w-full border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1">URL da Imagem de Fundo (Opcional)</label>
+                                    <input 
+                                        type="text" 
+                                        value={content.cta.bgImage || ''} 
+                                        onChange={e => setContent({...content, cta: {...content.cta, bgImage: e.target.value}})}
                                         className="w-full border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
                                     />
                                 </div>

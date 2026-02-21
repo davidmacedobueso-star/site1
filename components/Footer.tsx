@@ -9,13 +9,21 @@ const Footer: React.FC<FooterProps> = ({ onContactClick, onAdminClick }) => {
     return (
         <footer id="contacto" className="bg-white pt-16 border-t border-gray-200">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
-                    <div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
+                    <div className="col-span-1 md:col-span-1">
                         <h4 className="font-bold mb-4 uppercase">Quem Somos</h4>
                         <ul className="space-y-2 text-gray-600">
                             <li><a href="#sobre" className="hover:underline">A Empresa</a></li>
                             <li><a href="#ambiente" className="hover:underline">Sustentabilidade</a></li>
                         </ul>
+                        <div className="mt-8">
+                            <button 
+                                onClick={onContactClick}
+                                className="bg-yellow-400 text-black px-6 py-3 text-xs uppercase font-bold tracking-widest hover:bg-yellow-500 transition shadow-md"
+                            >
+                                Contacte-nos
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <h4 className="font-bold mb-4 uppercase">Apoio ao Cliente</h4>

@@ -7,8 +7,12 @@ const CTA: React.FC = () => {
     if (loading || !content) return <section className="py-12 bg-yellow-400 animate-pulse"><div className="h-20 bg-yellow-500/20 w-full"></div></section>;
 
     return (
-        <section className="py-12 bg-yellow-400">
-            <div className="max-w-4xl mx-auto px-6 text-center">
+        <section 
+            className="py-12 bg-yellow-400 relative overflow-hidden"
+            style={content.cta.bgImage ? { backgroundImage: `url(${content.cta.bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+        >
+            {content.cta.bgImage && <div className="absolute inset-0 bg-yellow-400/80"></div>}
+            <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
                 <h2 className="text-lg md:text-xl font-bold mb-2 text-black uppercase">{content.cta.title}</h2>
                 <p className="text-black mb-6 text-sm md:text-base">
                     {content.cta.subtitle}

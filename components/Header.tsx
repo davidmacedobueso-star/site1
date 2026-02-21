@@ -24,7 +24,7 @@ const Header: React.FC = () => {
                     className="relative z-10 w-full max-w-md md:max-w-none px-6"
                 >
                     <img 
-                        src="https://picsum.photos/seed/bueso-chair/800/1000" 
+                        src={content.header.imageUrl || "https://picsum.photos/seed/bueso-chair/800/1000"} 
                         alt="Product Showcase" 
                         className="w-full h-auto object-contain drop-shadow-2xl"
                         referrerPolicy="no-referrer"

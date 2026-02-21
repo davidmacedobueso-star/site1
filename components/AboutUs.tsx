@@ -51,18 +51,17 @@ const AboutUs: React.FC = () => {
                     <div className="mt-24">
                         <h3 className="text-2xl font-bold text-center mb-10">A Nossa Trajetória em Imagens</h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            {galleryImages.map((image, index) => {
-                                const imageUrl = `https://picsum.photos/seed/${image.seed}/400/400`;
+                            {(content.about.gallery || []).map((imageUrl: string, index: number) => {
                                 return (
                                     <button
                                         key={index}
                                         onClick={() => setSelectedImage(imageUrl)}
                                         className="block aspect-square bg-gray-200 group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-yellow-400 overflow-hidden"
-                                        aria-label={`Ver imagem: ${image.alt}`}
+                                        aria-label={`Ver imagem ${index + 1}`}
                                     >
                                         <img
                                             src={imageUrl}
-                                            alt={image.alt}
+                                            alt={`Galeria ${index + 1}`}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0"
                                             loading="lazy"
                                             decoding="async"
