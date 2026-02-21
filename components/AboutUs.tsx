@@ -10,7 +10,7 @@ const StatCard: React.FC<{ value: string; label: string }> = ({ value, label }) 
 );
 
 const galleryImages = [
-    { seed: 'old-factory', alt: 'Fábrica antiga da Plásticos Boeso' },
+    { seed: 'old-factory', alt: 'Fábrica antiga da Plásticos Bueso' },
     { seed: 'first-machine', alt: 'Primeira máquina de injeção' },
     { seed: 'founding-team', alt: 'Equipa fundadora da empresa' },
     { seed: 'early-product', alt: 'Um dos primeiros produtos fabricados' },

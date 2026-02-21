@@ -73,7 +73,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleProductSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!image) {
             setError('Por favor, selecione uma imagem.');
@@ -88,8 +88,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
         formData.append('description', description);
         formData.append('material', material);
         formData.append('finishType', finishType);
-        formData.append('specs', specs);
         formData.append('image', image);
+        
+        // Convert specs string to array
+        const specsArray = specs.split('\n').filter(s => s.trim() !== '');
+        formData.append('specs', JSON.stringify(specsArray));
 
         try {
             const response = await fetch('/api/admin/products', {
@@ -98,6 +101,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
             });
 
             if (response.ok) {
+                alert('Produto adicionado com sucesso!');
                 onProductAdded();
                 setName('');
                 setCode('');
@@ -157,46 +161,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
             }
         } catch (err) {
             alert('Erro ao conectar ao servidor');
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!image) {
-            setError('Por favor, selecione uma imagem');
-            return;
-        }
-
-        setIsSubmitting(true);
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('code', code);
-        formData.append('description', description);
-        formData.append('material', material);
-        formData.append('finishType', finishType);
-        formData.append('image', image);
-        
-        // Convert specs string to array
-        const specsArray = specs.split('\n').filter(s => s.trim() !== '');
-        formData.append('specs', JSON.stringify(specsArray));
-
-        try {
-            const response = await fetch('/api/admin/products', {
-                method: 'POST',
-                body: formData,
-            });
-            const data = await response.json();
-            if (data.success) {
-                alert('Produto adicionado com sucesso!');
-                onProductAdded();
-                onClose();
-            } else {
-                setError('Erro ao adicionar produto');
-            }
-        } catch (err) {
-            setError('Erro ao conectar ao servidor');
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -263,7 +227,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
             {activeTab === 'add' ? (
                 <>
                     <h2 className="text-xl font-bold mb-6 uppercase tracking-widest">Novo Produto</h2>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleProductSubmit} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Nome do Produto</label>

@@ -12,11 +12,14 @@ import Catalog from './pages/Catalog';
 import Modal from './components/Modal';
 import ContactForm from './components/ContactForm';
 import AdminPanel from './components/AdminPanel';
+import ChatInterface from './components/ChatInterface';
+import { MessageCircle } from 'lucide-react';
 
 function App() {
   const [route, setRoute] = useState(window.location.hash);
   const [isContactModalOpen, setContactModalOpen] = useState(false);
   const [isAdminModalOpen, setAdminModalOpen] = useState(false);
+  const [isChatModalOpen, setChatModalOpen] = useState(false);
 
 
   useEffect(() => {
@@ -77,6 +80,18 @@ function App() {
       <Navbar onContactClick={() => setContactModalOpen(true)} onAdminClick={() => setAdminModalOpen(true)} />
       {renderPage()}
       <Footer onContactClick={() => setContactModalOpen(true)} onAdminClick={() => setAdminModalOpen(true)} />
+      
+      {/* Floating Chat Button */}
+      <button 
+        onClick={() => setChatModalOpen(true)}
+        className="fixed bottom-6 right-6 z-40 bg-yellow-400 text-black p-4 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 group"
+        aria-label="Abrir Chat"
+      >
+        <MessageCircle size={24} className="group-hover:rotate-12 transition-transform" />
+        <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-black text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          Assistente IA
+        </span>
+      </button>
     </div>
     <Modal isOpen={isContactModalOpen} onClose={() => setContactModalOpen(false)}>
         <ContactForm onClose={() => setContactModalOpen(false)} />
@@ -89,6 +104,9 @@ function App() {
             window.location.reload();
           }
         }} />
+    </Modal>
+    <Modal isOpen={isChatModalOpen} onClose={() => setChatModalOpen(false)} padding={false}>
+        <ChatInterface onClose={() => setChatModalOpen(false)} />
     </Modal>
     </>
   );

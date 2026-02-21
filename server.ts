@@ -28,7 +28,7 @@ if (!fs.existsSync(CONTENT_FILE)) {
         about: {
             title: "A Nossa História de Precisão",
             subtitle: "Fundada no coração industrial de Braga, a nossa paixão é transformar polímeros em componentes de alta performance.",
-            content1: "Desde a nossa fundação, a Plásticos Boeso tem sido um pilar de inovação e qualidade na indústria de injeção de plásticos. Nascemos com a missão de fornecer soluções técnicas para os setores mais exigentes, com um foco especial na indústria automóvel.",
+            content1: "Desde a nossa fundação, a Plásticos Bueso tem sido um pilar de inovação e qualidade na indústria de injeção de plásticos. Nascemos com a missão de fornecer soluções técnicas para os setores mais exigentes, com um foco especial na indústria automóvel.",
             content2: "A nossa filosofia assenta em três pilares: precisão absoluta, tecnologia de ponta e uma parceria próxima com os nossos clientes. Cada peça que produzimos é o resultado de um processo meticuloso, desde a seleção do material até ao acabamento final, seja ele uma metalização sofisticada ou uma cromagem de elevada resistência."
         },
         cta: {

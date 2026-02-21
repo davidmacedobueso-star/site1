@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import Masonry from 'react-masonry-css';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Search, Loader2 } from 'lucide-react';
 import CatalogProductCard from '../components/CatalogProductCard';
 
 export interface Product {
@@ -27,8 +30,36 @@ const BackIcon = () => (
 const Catalog: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
-    const [materialFilter, setMaterialFilter] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
     const [finishFilter, setFinishFilter] = useState('all');
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    // Debounce search query
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearchQuery(searchQuery);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    const featuredProducts = products.slice(0, 3);
+
+    const nextSlide = () => {
+        setCurrentSlide((prev) => (prev + 1) % featuredProducts.length);
+    };
+
+    const prevSlide = () => {
+        setCurrentSlide((prev) => (prev - 1 + featuredProducts.length) % featuredProducts.length);
+    };
+
+    useEffect(() => {
+        if (featuredProducts.length > 0) {
+            const timer = setInterval(nextSlide, 5000);
+            return () => clearInterval(timer);
+        }
+    }, [featuredProducts.length]);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -47,14 +78,26 @@ const Catalog: React.FC = () => {
         fetchProducts();
     }, []);
 
-    const materials = ['all', ...Array.from(new Set(products.map(p => p.material)))];
-    const finishTypes = ['all', ...Array.from(new Set(products.map(p => p.finishType)))];
+    const finishTypes = useMemo(() => 
+        ['all', ...Array.from(new Set(products.map(p => p.finishType)))],
+        [products]
+    );
 
-    const filteredProducts = products.filter(product => {
-        const materialMatch = materialFilter === 'all' || product.material === materialFilter;
-        const finishMatch = finishFilter === 'all' || product.finishType === finishFilter;
-        return materialMatch && finishMatch;
-    });
+    const filteredProducts = useMemo(() => {
+        return products.filter(product => {
+            const nameMatch = product.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) || 
+                              product.code.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+            const finishMatch = finishFilter === 'all' || product.finishType === finishFilter;
+            return nameMatch && finishMatch;
+        });
+    }, [products, debouncedSearchQuery, finishFilter]);
+
+    const breakpointColumnsObj = {
+        default: 4,
+        1100: 3,
+        700: 2,
+        500: 1
+    };
 
     return (
         <main className="pt-24 pb-20 bg-white min-h-screen">
@@ -70,7 +113,7 @@ const Catalog: React.FC = () => {
                         </a>
                         <a 
                             href="/catalog.pdf" 
-                            download="Catalogo_Plasticos_Boeso.pdf"
+                            download="Catalogo_Plasticos_Bueso.pdf"
                             className="flex items-center justify-center px-4 py-2 bg-yellow-400 text-black font-bold text-[10px] uppercase tracking-widest hover:bg-yellow-500 transition"
                         >
                             <DownloadIcon /> Catálogo PDF
@@ -78,20 +121,109 @@ const Catalog: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Featured Carousel */}
+                {!loading && featuredProducts.length > 0 && (
+                    <div className="relative h-[400px] mb-16 overflow-hidden bg-gray-900 group">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={currentSlide}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.7 }}
+                                className="absolute inset-0"
+                            >
+                                <img 
+                                    src={featuredProducts[currentSlide].imageUrl} 
+                                    alt={featuredProducts[currentSlide].name}
+                                    className="w-full h-full object-cover opacity-60"
+                                />
+                                <div className="absolute inset-0 flex flex-col justify-center px-12 md:px-24">
+                                    <motion.span 
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ delay: 0.2 }}
+                                        className="text-yellow-400 font-bold text-xs uppercase tracking-[0.3em] mb-4"
+                                    >
+                                        Destaque
+                                    </motion.span>
+                                    <motion.h2 
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ delay: 0.3 }}
+                                        className="text-4xl md:text-6xl font-bold text-white mb-6 max-w-2xl leading-tight"
+                                    >
+                                        {featuredProducts[currentSlide].name}
+                                    </motion.h2>
+                                    <motion.p 
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ delay: 0.4 }}
+                                        className="text-gray-300 max-w-lg mb-8 line-clamp-2"
+                                    >
+                                        {featuredProducts[currentSlide].description}
+                                    </motion.p>
+                                    <motion.div
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ delay: 0.5 }}
+                                    >
+                                        <button className="px-8 py-3 bg-yellow-400 text-black font-bold text-xs uppercase tracking-widest hover:bg-yellow-500 transition">
+                                            Ver Detalhes
+                                        </button>
+                                    </motion.div>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+
+                        {/* Carousel Controls */}
+                        <button 
+                            onClick={prevSlide}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition opacity-0 group-hover:opacity-100"
+                        >
+                            <ChevronLeft size={24} />
+                        </button>
+                        <button 
+                            onClick={nextSlide}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition opacity-0 group-hover:opacity-100"
+                        >
+                            <ChevronRight size={24} />
+                        </button>
+
+                        {/* Indicators */}
+                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2">
+                            {featuredProducts.map((_, i) => (
+                                <button 
+                                    key={i}
+                                    onClick={() => setCurrentSlide(i)}
+                                    className={`h-1 transition-all duration-300 ${currentSlide === i ? 'w-8 bg-yellow-400' : 'w-4 bg-white/30'}`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Filters */}
                 <div className="flex flex-col md:flex-row gap-4 mb-12">
-                    <div className="w-full md:w-1/2 lg:w-1/4">
-                        <label htmlFor="material-filter" className="block text-xs font-semibold uppercase text-gray-500 mb-1">Filtrar por Material</label>
-                        <select 
-                            id="material-filter" 
-                            value={materialFilter} 
-                            onChange={e => setMaterialFilter(e.target.value)} 
-                            className="w-full bg-white border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                        >
-                            {materials.map(mat => (
-                                <option key={mat} value={mat}>{mat === 'all' ? 'Todos os Materiais' : mat}</option>
-                            ))}
-                        </select>
+                    <div className="w-full md:w-1/2 lg:w-1/3">
+                        <label htmlFor="search-filter" className="block text-xs font-semibold uppercase text-gray-500 mb-1">Pesquisar Produto</label>
+                        <div className="relative">
+                            <input 
+                                type="text" 
+                                id="search-filter" 
+                                placeholder="Nome ou código do produto..."
+                                value={searchQuery} 
+                                onChange={e => setSearchQuery(e.target.value)} 
+                                className="w-full bg-white border border-gray-300 p-2 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            />
+                            <div className="absolute left-3 top-2.5 h-4 w-4 text-gray-400">
+                                {searchQuery !== debouncedSearchQuery ? (
+                                    <Loader2 className="animate-spin h-4 w-4" />
+                                ) : (
+                                    <Search className="h-4 w-4" />
+                                )}
+                            </div>
+                        </div>
                     </div>
                      <div className="w-full md:w-1/2 lg:w-1/4">
                         <label htmlFor="finish-filter" className="block text-xs font-semibold uppercase text-gray-500 mb-1">Filtrar por Acabamento</label>
@@ -115,11 +247,17 @@ const Catalog: React.FC = () => {
                         ))}
                     </div>
                 ) : filteredProducts.length > 0 ? (
-                    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <Masonry
+                        breakpointCols={breakpointColumnsObj}
+                        className="flex -ml-8 w-auto"
+                        columnClassName="pl-8 bg-clip-padding"
+                    >
                         {filteredProducts.map(product => (
-                            <CatalogProductCard key={product.id} product={product} />
+                            <div key={product.id} className="mb-8">
+                                <CatalogProductCard product={product} />
+                            </div>
                         ))}
-                    </div>
+                    </Masonry>
                 ) : (
                     <div className="text-center py-16 bg-gray-50">
                         <h3 className="text-lg font-semibold text-black">Nenhum produto encontrado</h3>
