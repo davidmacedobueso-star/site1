@@ -7,6 +7,15 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         if (isMenuOpen) {
@@ -37,36 +46,36 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
     ];
 
     return (
-        <nav className="fixed w-full z-50 bg-white border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                <div className="text-xl font-bold tracking-tighter">
-                    <a href="#home" className="flex items-center gap-2 text-black">
+        <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md border-b border-gray-200 py-4 shadow-sm' : 'bg-transparent py-6'}`}>
+            <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+                <div className="text-xl font-black tracking-tighter">
+                    <a href="#home" className={`flex items-center gap-2 transition-colors ${scrolled ? 'text-zinc-900' : 'text-white'}`}>
                         <span>PLÁSTICOS</span> 
-                        <span>BUESO</span>
+                        <span className="text-yellow-500">BUESO</span>
                     </a>
                 </div>
                 
-                <div className="hidden md:flex items-center space-x-6 text-sm">
+                <div className={`hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest transition-colors ${scrolled ? 'text-zinc-600' : 'text-zinc-300'}`}>
                     {navLinks.map(link => (
-                         <a key={link.href} href={link.href} className="hover:underline">{link.label}</a>
+                         <a key={link.href} href={link.href} className={`hover:text-yellow-500 transition-colors ${scrolled ? 'hover:text-yellow-600' : ''}`}>{link.label}</a>
                     ))}
                     <button 
                         onClick={(e) => {
                             e.preventDefault();
                             onContactClick();
                         }}
-                        className="hover:underline"
+                        className={`hover:text-yellow-500 transition-colors ${scrolled ? 'hover:text-yellow-600' : ''}`}
                     >Contacto</button>
                     <button 
                         onClick={(e) => {
                             e.preventDefault();
                             onAdminClick();
                         }}
-                        className="bg-black text-white px-3 py-1 text-[10px] uppercase font-bold tracking-widest hover:bg-gray-800 transition"
+                        className={`px-4 py-2 border transition-colors ${scrolled ? 'border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white' : 'border-white text-white hover:bg-white hover:text-zinc-900'}`}
                     >Gestão</button>
                 </div>
 
-                <button id="menu-btn" className="md:hidden text-black focus:outline-none z-[60] relative h-6 w-6" onClick={toggleMenu} aria-label={isMenuOpen ? "Fechar Menu" : "Abrir Menu"}>
+                <button id="menu-btn" className={`md:hidden focus:outline-none z-[60] relative h-6 w-6 ${isMenuOpen || scrolled ? 'text-zinc-900' : 'text-white'}`} onClick={toggleMenu} aria-label={isMenuOpen ? "Fechar Menu" : "Abrir Menu"}>
                     <span className={`block absolute h-0.5 w-full bg-current transform transition duration-300 ease-in-out ${isMenuOpen ? 'rotate-45' : '-translate-y-1.5'}`}></span>
                     <span className={`block absolute h-0.5 w-full bg-current transform transition duration-300 ease-in-out ${isMenuOpen ? 'opacity-0' : ''}`}></span>
                     <span className={`block absolute h-0.5 w-full bg-current transform transition duration-300 ease-in-out ${isMenuOpen ? '-rotate-45' : 'translate-y-1.5'}`}></span>
@@ -80,30 +89,30 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
             >
                 {/* Overlay */}
                 <div
-                    className="absolute inset-0 bg-black/20"
+                    className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm"
                     onClick={toggleMenu}
                 ></div>
 
                 {/* Menu Panel */}
                 <div
-                    className={`relative ml-auto h-full w-4/5 max-w-xs bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+                    className={`relative ml-auto h-full w-4/5 max-w-xs bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="p-8 pt-24 flex flex-col text-left space-y-6">
                          {navLinks.map(link => (
-                            <a key={link.href} href={link.href} onClick={handleMobileLinkClick} className="text-lg hover:underline">{link.label}</a>
+                            <a key={link.href} href={link.href} onClick={handleMobileLinkClick} className="text-sm font-bold uppercase tracking-widest text-zinc-600 hover:text-yellow-600 transition-colors">{link.label}</a>
                          ))}
                          <button onClick={() => {
                              onContactClick();
                              handleMobileLinkClick();
                          }}
-                         className="mt-4 text-lg border border-black w-full py-3 text-center hover:bg-gray-100"
+                         className="mt-4 text-sm font-bold uppercase tracking-widest border border-zinc-900 w-full py-4 text-center hover:bg-zinc-50 transition-colors"
                          >Contacto</button>
                          <button onClick={() => {
                              onAdminClick();
                              handleMobileLinkClick();
                          }}
-                         className="mt-2 text-lg bg-black text-white w-full py-3 text-center hover:bg-gray-800"
+                         className="mt-2 text-sm font-bold uppercase tracking-widest bg-zinc-900 text-white w-full py-4 text-center hover:bg-zinc-800 transition-colors"
                          >Gestão</button>
                     </div>
                 </div>
