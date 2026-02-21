@@ -7,8 +7,11 @@ import cors from 'cors';
 
 const PORT = 3000;
 const DATA_FILE = path.join(process.cwd(), 'data', 'products.json');
+const FEATURED_DATA_FILE = path.join(process.cwd(), 'data', 'featured_products.json');
+const SERVICES_DATA_FILE = path.join(process.cwd(), 'data', 'services.json');
 const CONTENT_FILE = path.join(process.cwd(), 'data', 'content.json');
 const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
+const DOCUMENTS_DIR = path.join(process.cwd(), 'public', 'documents');
 
 // Ensure directories exist
 if (!fs.existsSync(path.join(process.cwd(), 'data'))) {
@@ -16,6 +19,9 @@ if (!fs.existsSync(path.join(process.cwd(), 'data'))) {
 }
 if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+if (!fs.existsSync(DOCUMENTS_DIR)) {
+    fs.mkdirSync(DOCUMENTS_DIR, { recursive: true });
 }
 
 // Initial content if file doesn't exist
@@ -46,6 +52,102 @@ if (!fs.existsSync(CONTENT_FILE)) {
         }
     };
     fs.writeFileSync(CONTENT_FILE, JSON.stringify(initialContent, null, 2));
+}
+
+// Initial featured products if file doesn't exist
+if (!fs.existsSync(FEATURED_DATA_FILE)) {
+    const initialFeatured = [
+        {
+            id: 1,
+            title: 'Peça Técnica Automóvel',
+            description: 'Acabamento em cromagem galvânica.',
+            detailedDescription: 'Um componente crítico para sistemas de transmissão, injetado em polímero de alta performance e posteriormente tratado com cromagem para máxima resistência ao desgaste e à corrosão. A precisão dimensional é garantida por controlo de qualidade a laser.',
+            applications: ['Sistemas de transmissão', 'Componentes de motor', 'Atuadores'],
+            imageUrl: 'https://picsum.photos/seed/auto-part/800/450',
+            specs: [
+                { key: 'Material Base', value: 'PA66 com 40% Fibra de Vidro' },
+                { key: 'Tratamento', value: 'Cromagem Galvânica (15μm)' },
+                { key: 'Tolerância', value: '±0.05mm' }
+            ]
+        },
+        {
+            id: 2,
+            title: 'Painel Decorativo',
+            description: 'Metalização por vácuo de alta precisão.',
+            detailedDescription: 'Painel para o interior de veículos de luxo, com um acabamento sofisticado de alumínio escovado obtido através de metalização PVD. O processo garante um aspeto idêntico ao metal real, mas com a leveza e versatilidade de design do plástico.',
+            applications: ['Consolas centrais de automóveis', 'Painéis de portas', 'Frentes de eletrodomésticos premium'],
+            imageUrl: 'https://picsum.photos/seed/panel/800/450',
+            specs: [
+                { key: 'Material Base', value: 'ABS de alto brilho' },
+                { key: 'Acabamento', value: 'PVD Alumínio + Verniz Anti-riscos' },
+                { key: 'Espessura da camada', value: '~200nm' }
+            ]
+        },
+        {
+            id: 3,
+            title: 'Suporte Customizado',
+            description: 'Injeção técnica com polímeros reforçados.',
+            detailedDescription: 'Suporte estrutural concebido para substituir uma peça de metal, oferecendo uma redução de peso superior a 50% sem comprometer a rigidez. O uso de polímeros reforçados com fibra de carbono permite otimizar a geometria para máxima performance.',
+            applications: ['Suportes de motor', 'Chassis de drones', 'Equipamento desportivo'],
+            imageUrl: 'https://picsum.photos/seed/support/800/450',
+            specs: [
+                { key: 'Material Base', value: 'PPA com 30% Fibra de Carbono' },
+                { key: 'Resistência à tração', value: '280 MPa' },
+                { key: 'Temp. de Deflexão', value: '250°C' }
+            ]
+        },
+        {
+            id: 4,
+            title: 'Componente Eletrónico',
+            description: 'Pintura especializada com proteção EMI.',
+            detailedDescription: 'Carcaça para um dispositivo de comunicação sensível. A pintura condutiva aplicada internamente cria uma Gaiola de Faraday, protegendo os componentes eletrónicos de interferências eletromagnéticas (EMI) e garantindo a integridade do sinal.',
+            applications: ['Routers e modems', 'Equipamento médico de diagnóstico', 'Sistemas de controlo industrial'],
+            imageUrl: 'https://picsum.photos/seed/electronic/800/450',
+            specs: [
+                { key: 'Material Base', value: 'PC/ABS (UL94 V-0)' },
+                { key: 'Pintura', value: 'Tinta à base de Níquel' },
+                { key: 'Atenuação EMI', value: '> 60dB (1-10 GHz)' }
+            ]
+        }
+    ];
+    fs.writeFileSync(FEATURED_DATA_FILE, JSON.stringify(initialFeatured, null, 2));
+}
+
+// Initial services if file doesn't exist
+if (!fs.existsSync(SERVICES_DATA_FILE)) {
+    const initialServices = [
+        {
+            id: 'injection',
+            title: "Injeção de Plásticos",
+            description: "Processo de moldagem de alta precisão para criar peças plásticas complexas com repetibilidade e eficiência.",
+            materials: "ABS, PC, PA6, PP, PE, PBT.",
+            benefits: "Alta produção, baixo custo unitário, geometrias complexas, excelente acabamento superficial.",
+            detailedDescription: "Utilizamos máquinas de injeção de última geração com controlo de processo em tempo real. A nossa equipa especializada otimiza cada ciclo para garantir peças com as dimensões exatas, livres de defeitos e com as propriedades mecânicas desejadas. Desde a seleção do material até ao design do molde, oferecemos um serviço completo.",
+            applications: ['Componentes estruturais para automóveis', 'Caixas para dispositivos eletrónicos', 'Artigos de consumo duráveis', 'Dispositivos médicos'],
+            imageUrl: 'https://picsum.photos/seed/injection-process/800/450'
+        },
+        {
+            id: 'vacuum',
+            title: "Metalização por Vácuo",
+            description: "Aplicação de uma fina camada de metal sobre uma superfície plástica em ambiente de vácuo, criando um acabamento decorativo e funcional.",
+            materials: "Alumínio (Al), Cobre (Cu), Estanho (Sn).",
+            benefits: "Acabamento espelhado/metálico, leveza, aplicável a plásticos sensíveis, versatilidade de cores.",
+            detailedDescription: "A metalização por vácuo (PVD - Physical Vapor Deposition) é ideal para obter acabamentos premium sem adicionar peso significativo. O processo envolve a vaporização do metal, que depois se condensa sobre a peça, formando uma camada uniforme e aderente. É uma alternativa ecológica à cromagem tradicional para muitas aplicações decorativas.",
+            applications: ['Refletores de faróis', 'Painéis decorativos interiores', 'Embalagens de cosméticos de luxo', 'Componentes de telemóveis'],
+            imageUrl: 'https://picsum.photos/seed/vacuum-chamber/800/450'
+        },
+        {
+            id: 'chrome',
+            title: "Cromagem Galvânica",
+            description: "Processo eletroquímico que deposita uma camada de cromo sobre a peça, conferindo durabilidade, resistência à corrosão e um brilho superior.",
+            materials: "Cromo trivalente e hexavalente sobre ABS especial (ABS/PC).",
+            benefits: "Elevada dureza superficial, resistência à abrasão e corrosão, estética premium, toque frio.",
+            detailedDescription: "A nossa linha de cromagem galvânica foi desenhada para a indústria automóvel, cumprindo os mais rigorosos padrões de qualidade. O processo multi-camadas (cobre, níquel, cromo) assegura uma adesão perfeita ao substrato plástico e uma resistência excecional a ciclos térmicos e ambientes agressivos. O resultado é um acabamento impecável e duradouro.",
+            applications: ['Grelhas frontais de veículos', 'Puxadores de porta e frisos', 'Comandos e botões interiores', 'Acessórios de casa de banho de gama alta'],
+            imageUrl: 'https://picsum.photos/seed/chrome-plating-line/800/450'
+        }
+    ];
+    fs.writeFileSync(SERVICES_DATA_FILE, JSON.stringify(initialServices, null, 2));
 }
 
 // Initial data if file doesn't exist
@@ -148,12 +250,50 @@ async function startServer() {
         }
     });
 
+    app.get('/api/featured-products', (req, res) => {
+        const data = JSON.parse(fs.readFileSync(FEATURED_DATA_FILE, 'utf-8'));
+        res.json(data);
+    });
+
+    app.get('/api/services', (req, res) => {
+        const data = JSON.parse(fs.readFileSync(SERVICES_DATA_FILE, 'utf-8'));
+        res.json(data);
+    });
+
     app.post('/api/admin/content', (req, res) => {
         // In a real app, we'd verify the token here
         const content = req.body;
         fs.writeFileSync(CONTENT_FILE, JSON.stringify(content, null, 2));
         res.json({ success: true });
     });
+
+    app.post('/api/admin/featured-products', (req, res) => {
+        const data = req.body;
+        fs.writeFileSync(FEATURED_DATA_FILE, JSON.stringify(data, null, 2));
+        res.json({ success: true });
+    });
+
+    app.post('/api/admin/services', (req, res) => {
+        const data = req.body;
+        fs.writeFileSync(SERVICES_DATA_FILE, JSON.stringify(data, null, 2));
+        res.json({ success: true });
+    });
+
+    app.post('/api/admin/upload-catalog', upload.single('catalog'), (req, res) => {
+        if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
+        
+        const oldPath = req.file.path;
+        const newPath = path.join(DOCUMENTS_DIR, 'catalog.pdf');
+        
+        // Ensure documents dir exists (already handled at startup but good to be safe)
+        if (!fs.existsSync(DOCUMENTS_DIR)) fs.mkdirSync(DOCUMENTS_DIR, { recursive: true });
+
+        fs.copyFileSync(oldPath, newPath);
+        fs.unlinkSync(oldPath); // remove temp file
+        res.json({ success: true, url: '/documents/catalog.pdf' });
+    });
+
+    app.use('/documents', express.static(DOCUMENTS_DIR));
 
     app.post('/api/contact', upload.single('attachment'), (req, res) => {
         const { name, email, subject, message } = req.body;
@@ -177,10 +317,16 @@ async function startServer() {
         }
     });
 
-    app.post('/api/admin/products', upload.single('image'), (req, res) => {
+    app.post('/api/admin/products', upload.fields([
+        { name: 'image', maxCount: 1 },
+        { name: 'drawing', maxCount: 1 }
+    ]), (req, res) => {
         // In a real app, we'd verify the token here
         const { name, code, description, material, finishType, specs } = req.body;
-        const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+        
+        const imageUrl = files['image'] ? `/uploads/${files['image'][0].filename}` : '';
+        const drawingUrl = files['drawing'] ? `/uploads/${files['drawing'][0].filename}` : '';
 
         const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
         const newProduct = {
@@ -191,6 +337,7 @@ async function startServer() {
             material,
             finishType,
             imageUrl,
+            drawingUrl,
             specs: specs ? JSON.parse(specs) : []
         };
 

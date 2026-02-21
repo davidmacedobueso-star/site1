@@ -5,6 +5,7 @@ export interface DetailedProduct {
     detailedDescription: string;
     applications: string[];
     specs: { key: string; value: string; }[];
+    imageUrl?: string;
 }
 
 export const productsData: DetailedProduct[] = [

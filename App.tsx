@@ -29,6 +29,12 @@ function App() {
       setRoute(newHash);
 
       // Scroll logic for sections
+      if (newHash === '#contacto') {
+        setContactModalOpen(true);
+        window.location.hash = '#home'; // Reset hash
+        return;
+      }
+
       if (newHash && newHash !== '#catalogo' && !newHash.startsWith('#produto/')) {
         // Small delay to allow the DOM to render the home sections if we just came from Catalog
         setTimeout(() => {

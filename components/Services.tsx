@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
-import { servicesData } from '../data/servicesData';
 import type { Service } from '../data/servicesData';
 
 
@@ -54,17 +53,28 @@ interface ServicesProps {
 
 const Services: React.FC<ServicesProps> = ({ onContactClick }) => {
     const [selectedService, setSelectedService] = useState<Service | null>(null);
+    const [servicesData, setServicesData] = useState<Service[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const response = await fetch('/api/services');
+                const data = await response.json();
+                setServicesData(data);
+            } catch (error) {
+                console.error('Error fetching services:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchServices();
+    }, []);
 
     const serviceIcons: { [key: string]: React.ReactNode } = {
         injection: <InjectionIcon />,
         vacuum: <VacuumIcon />,
         chrome: <ChromeIcon />,
-    };
-
-    const serviceImages: { [key: string]: string } = {
-        injection: 'https://picsum.photos/seed/injection-process/800/450',
-        vacuum: 'https://picsum.photos/seed/vacuum-chamber/800/450',
-        chrome: 'https://picsum.photos/seed/chrome-plating-line/800/450',
     };
 
     return (
@@ -98,7 +108,7 @@ const Services: React.FC<ServicesProps> = ({ onContactClick }) => {
                  <div>
                     <div className="aspect-video bg-gray-100 mb-6">
                         <img 
-                            src={serviceImages[selectedService.id]} 
+                            src={(selectedService as any).imageUrl || 'https://picsum.photos/seed/service/800/450'} 
                             alt={selectedService.title}
                             className="w-full h-full object-cover"
                             loading="lazy"

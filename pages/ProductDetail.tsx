@@ -143,7 +143,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
                                 <Settings size={20} className="text-yellow-600" />
                                 <h3 className="font-bold uppercase text-sm tracking-widest">Especificações Técnicas</h3>
                             </div>
-                            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-8">
                                 <table className="w-full text-sm">
                                     <tbody className="divide-y divide-gray-100">
                                         <tr className="hover:bg-gray-50 transition-colors">
@@ -170,16 +170,56 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
                                     </tbody>
                                 </table>
                             </div>
+
+                            {product.drawingUrl && (
+                                <div className="space-y-4">
+                                    <h4 className="font-bold uppercase text-xs tracking-widest text-gray-400">Desenho Técnico</h4>
+                                    <div className="border border-gray-200 rounded-xl overflow-hidden bg-gray-50 p-4">
+                                        {product.drawingUrl.toLowerCase().endsWith('.pdf') ? (
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm font-medium">Ficha Técnica PDF</span>
+                                                <a 
+                                                    href={product.drawingUrl} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="text-xs font-bold uppercase tracking-widest text-yellow-600 hover:text-yellow-700"
+                                                >
+                                                    Abrir PDF →
+                                                </a>
+                                            </div>
+                                        ) : (
+                                            <img 
+                                                src={product.drawingUrl} 
+                                                alt="Desenho Técnico" 
+                                                className="w-full h-auto rounded-lg shadow-sm"
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Action Buttons */}
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <button className="flex-1 bg-black text-white font-bold py-4 uppercase text-xs tracking-widest hover:bg-gray-800 transition shadow-lg">
+                            <button 
+                                onClick={() => window.location.href = '#contacto'}
+                                className="flex-1 bg-black text-white font-bold py-4 uppercase text-xs tracking-widest hover:bg-gray-800 transition shadow-lg"
+                            >
                                 Solicitar Orçamento
                             </button>
-                            <button className="flex-1 border border-black text-black font-bold py-4 uppercase text-xs tracking-widest hover:bg-gray-50 transition">
-                                Descarregar Ficha Técnica
-                            </button>
+                            {product.drawingUrl ? (
+                                <a 
+                                    href={product.drawingUrl}
+                                    download
+                                    className="flex-1 border border-black text-black font-bold py-4 uppercase text-xs tracking-widest hover:bg-gray-50 transition text-center"
+                                >
+                                    Descarregar Desenho
+                                </a>
+                            ) : (
+                                <button className="flex-1 border border-black text-black font-bold py-4 uppercase text-xs tracking-widest hover:bg-gray-50 transition opacity-50 cursor-not-allowed">
+                                    Ficha Indisponível
+                                </button>
+                            )}
                         </div>
                     </motion.div>
                 </div>

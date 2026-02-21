@@ -7,10 +7,14 @@ interface AdminPanelProps {
 
 const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [activeTab, setActiveTab] = useState<'add' | 'manage' | 'content'>('add');
+    const [activeTab, setActiveTab] = useState<'add' | 'manage' | 'content' | 'featured' | 'services' | 'catalog'>('add');
     const [products, setProducts] = useState<any[]>([]);
+    const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+    const [services, setServices] = useState<any[]>([]);
     const [content, setContent] = useState<any>(null);
     const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+    const [isLoadingFeatured, setIsLoadingFeatured] = useState(false);
+    const [isLoadingServices, setIsLoadingServices] = useState(false);
     const [isLoadingContent, setIsLoadingContent] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -22,8 +26,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
     const [material, setMaterial] = useState('');
     const [finishType, setFinishType] = useState('Injeção');
     const [image, setImage] = useState<File | null>(null);
+    const [drawing, setDrawing] = useState<File | null>(null);
     const [specs, setSpecs] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [catalogFile, setCatalogFile] = useState<File | null>(null);
 
     const fetchProducts = async () => {
         setIsLoadingProducts(true);
@@ -51,6 +57,32 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
         }
     };
 
+    const fetchFeatured = async () => {
+        setIsLoadingFeatured(true);
+        try {
+            const response = await fetch('/api/featured-products');
+            const data = await response.json();
+            setFeaturedProducts(data);
+        } catch (err) {
+            console.error('Error fetching featured products:', err);
+        } finally {
+            setIsLoadingFeatured(false);
+        }
+    };
+
+    const fetchServices = async () => {
+        setIsLoadingServices(true);
+        try {
+            const response = await fetch('/api/services');
+            const data = await response.json();
+            setServices(data);
+        } catch (err) {
+            console.error('Error fetching services:', err);
+        } finally {
+            setIsLoadingServices(false);
+        }
+    };
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -65,6 +97,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
                 setError('');
                 fetchProducts();
                 fetchContent();
+                fetchFeatured();
+                fetchServices();
             } else {
                 setError(data.message);
             }
@@ -89,6 +123,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
         formData.append('material', material);
         formData.append('finishType', finishType);
         formData.append('image', image);
+        if (drawing) formData.append('drawing', drawing);
         
         // Convert specs string to array
         const specsArray = specs.split('\n').filter(s => s.trim() !== '');
@@ -110,6 +145,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
                 setFinishType('Injeção');
                 setSpecs('');
                 setImage(null);
+                setDrawing(null);
                 setActiveTab('manage');
                 fetchProducts();
             } else {
@@ -140,6 +176,59 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
             }
         } catch (err) {
             alert('Erro ao conectar ao servidor');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleFeaturedUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            const response = await fetch('/api/admin/featured-products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(featuredProducts),
+            });
+            if (response.ok) alert('Produtos destacados atualizados!');
+        } catch (err) {
+            alert('Erro ao atualizar produtos destacados');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleServicesUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            const response = await fetch('/api/admin/services', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(services),
+            });
+            if (response.ok) alert('Serviços atualizados!');
+        } catch (err) {
+            alert('Erro ao atualizar serviços');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleCatalogUpload = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!catalogFile) return;
+        setIsSubmitting(true);
+        const formData = new FormData();
+        formData.append('catalog', catalogFile);
+        try {
+            const response = await fetch('/api/admin/upload-catalog', {
+                method: 'POST',
+                body: formData,
+            });
+            if (response.ok) alert('Catálogo PDF atualizado com sucesso!');
+        } catch (err) {
+            alert('Erro ao carregar catálogo');
         } finally {
             setIsSubmitting(false);
         }
@@ -203,24 +292,42 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
 
     return (
         <div className="p-6 max-h-[80vh] overflow-y-auto no-scrollbar">
-            <div className="flex border-b border-gray-200 mb-6">
+            <div className="flex border-b border-gray-200 mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
                 <button 
                     onClick={() => setActiveTab('add')}
-                    className={`pb-2 px-4 text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === 'add' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
+                    className={`pb-2 px-4 text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === 'add' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
                 >
-                    Adicionar
+                    Novo Prod.
                 </button>
                 <button 
                     onClick={() => setActiveTab('manage')}
-                    className={`pb-2 px-4 text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === 'manage' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
+                    className={`pb-2 px-4 text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === 'manage' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
                 >
                     Gerir ({products.length})
                 </button>
                 <button 
-                    onClick={() => setActiveTab('content')}
-                    className={`pb-2 px-4 text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === 'content' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
+                    onClick={() => setActiveTab('featured')}
+                    className={`pb-2 px-4 text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === 'featured' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
                 >
-                    Conteúdo
+                    Destaques
+                </button>
+                <button 
+                    onClick={() => setActiveTab('services')}
+                    className={`pb-2 px-4 text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === 'services' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
+                >
+                    Serviços
+                </button>
+                <button 
+                    onClick={() => setActiveTab('content')}
+                    className={`pb-2 px-4 text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === 'content' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
+                >
+                    Textos
+                </button>
+                <button 
+                    onClick={() => setActiveTab('catalog')}
+                    className={`pb-2 px-4 text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === 'catalog' ? 'border-b-2 border-yellow-400 text-black' : 'text-gray-400 hover:text-black'}`}
+                >
+                    PDF
                 </button>
             </div>
 
@@ -308,6 +415,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
                             />
                         </div>
 
+                        <div>
+                            <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Desenho Técnico (Opcional)</label>
+                            <input 
+                                type="file" 
+                                accept="image/*,application/pdf"
+                                onChange={e => setDrawing(e.target.files ? e.target.files[0] : null)}
+                                className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            />
+                        </div>
+
                         {error && <p className="text-red-500 text-sm">{error}</p>}
 
                         <div className="flex space-x-4 pt-4">
@@ -366,6 +483,150 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onProductAdded }) => {
                             Fechar
                         </button>
                     </div>
+                </div>
+            ) : activeTab === 'featured' ? (
+                <div className="space-y-6">
+                    <h2 className="text-xl font-bold mb-6 uppercase tracking-widest">Produtos Destacados (Home)</h2>
+                    {isLoadingFeatured ? <p>A carregar...</p> : (
+                        <form onSubmit={handleFeaturedUpdate} className="space-y-8">
+                            {featuredProducts.map((p, idx) => (
+                                <div key={p.id} className="p-4 border border-gray-200 space-y-4">
+                                    <h3 className="font-bold text-xs uppercase text-yellow-600">Destaque {idx + 1}</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input 
+                                            type="text" 
+                                            placeholder="Título"
+                                            value={p.title}
+                                            onChange={e => {
+                                                const newFeatured = [...featuredProducts];
+                                                newFeatured[idx].title = e.target.value;
+                                                setFeaturedProducts(newFeatured);
+                                            }}
+                                            className="w-full border border-gray-300 p-2 text-sm"
+                                        />
+                                        <input 
+                                            type="text" 
+                                            placeholder="Descrição Curta"
+                                            value={p.description}
+                                            onChange={e => {
+                                                const newFeatured = [...featuredProducts];
+                                                newFeatured[idx].description = e.target.value;
+                                                setFeaturedProducts(newFeatured);
+                                            }}
+                                            className="w-full border border-gray-300 p-2 text-sm"
+                                        />
+                                    </div>
+                                    <textarea 
+                                        placeholder="Descrição Detalhada"
+                                        value={p.detailedDescription}
+                                        onChange={e => {
+                                            const newFeatured = [...featuredProducts];
+                                            newFeatured[idx].detailedDescription = e.target.value;
+                                            setFeaturedProducts(newFeatured);
+                                        }}
+                                        className="w-full border border-gray-300 p-2 text-sm h-24"
+                                    />
+                                </div>
+                            ))}
+                            <button type="submit" disabled={isSubmitting} className="w-full bg-yellow-400 text-black font-bold py-3 uppercase tracking-widest hover:bg-yellow-500 transition">
+                                {isSubmitting ? 'A guardar...' : 'Atualizar Destaques'}
+                            </button>
+                        </form>
+                    )}
+                </div>
+            ) : activeTab === 'services' ? (
+                <div className="space-y-6">
+                    <h2 className="text-xl font-bold mb-6 uppercase tracking-widest">Gerir Serviços</h2>
+                    {isLoadingServices ? <p>A carregar...</p> : (
+                        <form onSubmit={handleServicesUpdate} className="space-y-8">
+                            {services.map((s, idx) => (
+                                <div key={s.id} className="p-4 border border-gray-200 space-y-4">
+                                    <h3 className="font-bold text-xs uppercase text-yellow-600">{s.title}</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1">Título</label>
+                                            <input 
+                                                type="text" 
+                                                value={s.title}
+                                                onChange={e => {
+                                                    const newServices = [...services];
+                                                    newServices[idx].title = e.target.value;
+                                                    setServices(newServices);
+                                                }}
+                                                className="w-full border border-gray-300 p-2 text-sm"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1">Imagem URL</label>
+                                            <input 
+                                                type="text" 
+                                                value={s.imageUrl}
+                                                onChange={e => {
+                                                    const newServices = [...services];
+                                                    newServices[idx].imageUrl = e.target.value;
+                                                    setServices(newServices);
+                                                }}
+                                                className="w-full border border-gray-300 p-2 text-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1">Descrição Curta</label>
+                                        <textarea 
+                                            value={s.description}
+                                            onChange={e => {
+                                                const newServices = [...services];
+                                                newServices[idx].description = e.target.value;
+                                                setServices(newServices);
+                                            }}
+                                            className="w-full border border-gray-300 p-2 text-sm h-20"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1">Descrição Detalhada</label>
+                                        <textarea 
+                                            value={s.detailedDescription}
+                                            onChange={e => {
+                                                const newServices = [...services];
+                                                newServices[idx].detailedDescription = e.target.value;
+                                                setServices(newServices);
+                                            }}
+                                            className="w-full border border-gray-300 p-2 text-sm h-32"
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                            <button type="submit" disabled={isSubmitting} className="w-full bg-yellow-400 text-black font-bold py-3 uppercase tracking-widest hover:bg-yellow-500 transition">
+                                {isSubmitting ? 'A guardar...' : 'Atualizar Serviços'}
+                            </button>
+                        </form>
+                    )}
+                </div>
+            ) : activeTab === 'catalog' ? (
+                <div className="space-y-6">
+                    <h2 className="text-xl font-bold mb-6 uppercase tracking-widest">Upload do Catálogo PDF</h2>
+                    <form onSubmit={handleCatalogUpload} className="space-y-4">
+                        <div className="p-8 border-2 border-dashed border-gray-200 text-center">
+                            <input 
+                                type="file" 
+                                accept="application/pdf"
+                                onChange={e => setCatalogFile(e.target.files ? e.target.files[0] : null)}
+                                className="hidden"
+                                id="catalog-upload"
+                            />
+                            <label htmlFor="catalog-upload" className="cursor-pointer">
+                                <div className="text-gray-400 mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                    </svg>
+                                </div>
+                                <p className="text-sm font-bold uppercase tracking-widest">{catalogFile ? catalogFile.name : 'Selecionar Catálogo PDF'}</p>
+                            </label>
+                        </div>
+                        <button type="submit" disabled={!catalogFile || isSubmitting} className="w-full bg-black text-white font-bold py-3 uppercase tracking-widest hover:bg-gray-800 transition disabled:opacity-50">
+                            {isSubmitting ? 'A carregar...' : 'Substituir Catálogo Atual'}
+                        </button>
+                    </form>
                 </div>
             ) : (
                 <div className="space-y-6">

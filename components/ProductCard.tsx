@@ -3,15 +3,16 @@ import React from 'react';
 interface ProductCardProps {
     title: string;
     description: string;
+    imageUrl?: string;
     onClick: () => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ title, description, onClick }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ title, description, imageUrl, onClick }) => {
     return (
         <div className="flex flex-col flex-shrink-0 w-[280px] snap-start text-center group cursor-pointer" onClick={onClick}>
             <div className="bg-gray-200 mb-4 overflow-hidden aspect-[4/3] relative">
                 <img 
-                    src={`https://picsum.photos/seed/${title}/400/300`} 
+                    src={imageUrl || `https://picsum.photos/seed/${title}/400/300`} 
                     alt={title} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"

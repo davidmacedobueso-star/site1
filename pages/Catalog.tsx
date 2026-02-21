@@ -9,6 +9,7 @@ export interface Product {
     name: string;
     code: string;
     imageUrl: string;
+    drawingUrl?: string;
     description: string;
     specs: string[];
     material: string;
@@ -112,7 +113,7 @@ const Catalog: React.FC = () => {
                             <BackIcon /> Voltar
                         </a>
                         <a 
-                            href="/catalog.pdf" 
+                            href="/documents/catalog.pdf" 
                             download="Catalogo_Plasticos_Bueso.pdf"
                             className="flex items-center justify-center px-4 py-2 bg-yellow-400 text-black font-bold text-[10px] uppercase tracking-widest hover:bg-yellow-500 transition"
                         >

@@ -1,9 +1,26 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ProductCard from './ProductCard';
-import { productsData } from '../data/productsData';
+import type { DetailedProduct } from '../data/productsData';
 
 const Products: React.FC = () => {
     const carouselRef = useRef<HTMLDivElement>(null);
+    const [productsData, setProductsData] = useState<DetailedProduct[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchFeatured = async () => {
+            try {
+                const response = await fetch('/api/featured-products');
+                const data = await response.json();
+                setProductsData(data);
+            } catch (error) {
+                console.error('Error fetching featured products:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchFeatured();
+    }, []);
 
     const scroll = (direction: 'left' | 'right') => {
         if (carouselRef.current) {
@@ -33,6 +50,7 @@ const Products: React.FC = () => {
                             <ProductCard 
                                 title={product.title} 
                                 description={product.description}
+                                imageUrl={product.imageUrl}
                                 onClick={() => {}}
                             />
                         </a>
