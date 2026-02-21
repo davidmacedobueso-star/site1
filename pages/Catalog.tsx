@@ -168,9 +168,12 @@ const Catalog: React.FC = () => {
                                         animate={{ y: 0, opacity: 1 }}
                                         transition={{ delay: 0.5 }}
                                     >
-                                        <button className="px-8 py-3 bg-yellow-400 text-black font-bold text-xs uppercase tracking-widest hover:bg-yellow-500 transition">
+                                        <a 
+                                            href={`#produto/${featuredProducts[currentSlide].id}`}
+                                            className="inline-block px-8 py-3 bg-yellow-400 text-black font-bold text-xs uppercase tracking-widest hover:bg-yellow-500 transition"
+                                        >
                                             Ver Detalhes
-                                        </button>
+                                        </a>
                                     </motion.div>
                                 </div>
                             </motion.div>

@@ -9,6 +9,7 @@ import AboutUs from './components/AboutUs';
 import Environment from './components/Environment';
 import Footer from './components/Footer';
 import Catalog from './pages/Catalog';
+import ProductDetail from './pages/ProductDetail';
 import Modal from './components/Modal';
 import ContactForm from './components/ContactForm';
 import AdminPanel from './components/AdminPanel';
@@ -28,7 +29,7 @@ function App() {
       setRoute(newHash);
 
       // Scroll logic for sections
-      if (newHash && newHash !== '#catalogo') {
+      if (newHash && newHash !== '#catalogo' && !newHash.startsWith('#produto/')) {
         // Small delay to allow the DOM to render the home sections if we just came from Catalog
         setTimeout(() => {
           const id = newHash.replace('#', '');
@@ -39,7 +40,7 @@ function App() {
              window.scrollTo({ top: 0, behavior: 'smooth' });
           }
         }, 150);
-      } else if (newHash !== '#catalogo') {
+      } else if (newHash !== '#catalogo' && !newHash.startsWith('#produto/')) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
@@ -59,6 +60,13 @@ function App() {
   const renderPage = () => {
     if (route === '#catalogo') {
       return <Catalog />;
+    }
+
+    if (route.startsWith('#produto/')) {
+      const productId = parseInt(route.split('/')[1]);
+      if (!isNaN(productId)) {
+        return <ProductDetail productId={productId} />;
+      }
     }
     
     return (
