@@ -66,10 +66,10 @@ function App() {
         <Header />
         <Products />
         <Services onContactClick={() => setContactModalOpen(true)} />
+        <FAQ />
         <CTA />
         <Environment />
         <AboutUs />
-        <FAQ />
       </main>
     );
   };
