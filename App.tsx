@@ -81,7 +81,7 @@ function App() {
         <Products />
         <Services onContactClick={() => setContactModalOpen(true)} />
         <FAQ />
-        <CTA onContactClick={() => setContactModalOpen(true)} />
+        <CTA />
         <Environment />
         <AboutUs />
       </main>
@@ -90,7 +90,7 @@ function App() {
 
   return (
     <>
-    <div className="min-h-screen selection:bg-yellow-400 selection:text-black">
+    <div className="bg-white text-black font-sans min-h-screen selection:bg-yellow-400 selection:text-black">
       <Navbar onContactClick={() => setContactModalOpen(true)} onAdminClick={() => setAdminModalOpen(true)} />
       {renderPage()}
       <Footer onContactClick={() => setContactModalOpen(true)} onAdminClick={() => setAdminModalOpen(true)} />

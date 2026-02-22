@@ -1,45 +1,38 @@
 import React from 'react';
 
-import { motion } from 'framer-motion';
-
 interface ProductCardProps {
     title: string;
     description: string;
     imageUrl?: string;
+    onClick: () => void;
 }
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.6, 0.01, 0.05, 0.95]
-    }
-  },
-};
-
-const ProductCard: React.FC<ProductCardProps> = ({ title, description, imageUrl }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ title, description, imageUrl, onClick }) => {
     return (
-        <motion.div className="group cursor-pointer" variants={cardVariants}>
-            <div className="bg-gray-100 overflow-hidden aspect-[4/5] relative">
+        <div className="flex flex-col flex-shrink-0 w-[280px] snap-start text-center group cursor-pointer" onClick={onClick}>
+            <div className="bg-gray-200 mb-4 overflow-hidden aspect-[4/3] relative">
                 <img 
-                    src={imageUrl || `https://picsum.photos/seed/${title}/800/1000`} 
+                    src={imageUrl || `https://picsum.photos/seed/${title}/400/300`} 
                     alt={title} 
-                    className="w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
                     decoding="async"
-                    referrerPolicy="no-referrer"
                 />
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
             </div>
             
-            <div className="pt-4">
-                <h3 className="font-serif text-xl text-black">{title}</h3>
-                <p className="text-sm text-gray-500 mt-1">{description}</p>
+            <div className="flex-grow px-1">
+                <h3 className="font-bold text-base group-hover:text-yellow-600 transition-colors">{title}</h3>
+                <p className="text-sm text-gray-600 my-2">{description}</p>
             </div>
-        </motion.div>
+
+            <div className="pt-2 pb-1">
+                <button 
+                    className="inline-block text-xs font-bold uppercase tracking-wider text-black border-b border-black group-hover:border-yellow-600 group-hover:text-yellow-600 transition"
+                >
+                    Saber Mais
+                </button>
+            </div>
+        </div>
     );
 };
 

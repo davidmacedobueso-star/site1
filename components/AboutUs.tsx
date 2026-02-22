@@ -1,76 +1,89 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Modal from './Modal';
 import { useContent } from '../src/hooks/useContent';
-import { motion } from 'framer-motion';
 
-const Stat: React.FC<{ value: string; label: string }> = ({ value, label }) => (
-    <div>
-        <p className="text-4xl md:text-5xl font-serif text-black">{value}</p>
-        <p className="text-xs uppercase tracking-widest text-gray-500 font-medium mt-1">{label}</p>
+const StatCard: React.FC<{ value: string; label: string }> = ({ value, label }) => (
+    <div className="bg-gray-50 p-6 border border-gray-100 text-center hover:bg-white hover:shadow-lg transition-all duration-300">
+        <p className="text-4xl font-bold text-black mb-2">{value}</p>
+        <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">{label}</p>
     </div>
 );
 
+const galleryImages = [
+    { seed: 'old-factory', alt: 'Fábrica antiga da Plásticos Bueso' },
+    { seed: 'first-machine', alt: 'Primeira máquina de injeção' },
+    { seed: 'founding-team', alt: 'Equipa fundadora da empresa' },
+    { seed: 'early-product', alt: 'Um dos primeiros produtos fabricados' },
+];
+
 const AboutUs: React.FC = () => {
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const { content, loading } = useContent();
 
-    if (loading || !content) return <section className="py-24 bg-white animate-pulse"><div className="max-w-7xl mx-auto px-6"><div className="h-10 bg-gray-200 w-1/2 mb-8"></div><div className="h-40 bg-gray-100 w-full"></div></div></section>;
+    if (loading || !content) return <section className="py-24 bg-white animate-pulse"><div className="max-w-7xl mx-auto px-6"><div className="h-10 bg-gray-200 w-1/2 mx-auto mb-8"></div><div className="h-40 bg-gray-100 w-full"></div></div></section>;
 
     return (
-        <section id="sobre" className="py-20 md:py-32 bg-white overflow-hidden">
-            <div className="max-w-screen-xl mx-auto px-6">
-                <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-center">
-                    {/* Image Column */}
-                    <motion.div 
-                        className="relative aspect-[4/5] rounded-2xl overflow-hidden"
-                        initial={{ x: -100, opacity: 0 }}
-                        whileInView={{ x: 0, opacity: 1 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                        <img
-                            src="https://picsum.photos/seed/bueso-about/800/1000"
-                            alt="Fábrica da Plásticos Bueso"
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                            decoding="async"
-                            referrerPolicy="no-referrer"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                    </motion.div>
+        <>
+            <section id="sobre" className="py-24 bg-white">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-bold mb-4">{content.about.title}</h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto text-lg">{content.about.subtitle}</p>
+                    </div>
 
-                    {/* Content Column */}
-                    <motion.div
-                        initial={{ x: 100, opacity: 0 }}
-                        whileInView={{ x: 0, opacity: 1 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-                    >
-                        <h2 className="text-4xl md:text-5xl font-serif mb-6">{content.about.title}</h2>
-                        <p className="text-gray-500 text-lg mb-8 leading-relaxed">{content.about.subtitle}</p>
-                        
-                        <div className="space-y-4 text-gray-700 leading-relaxed mb-12">
+                    <div className="grid md:grid-cols-2 gap-16 items-center">
+                        <div className="space-y-6 text-gray-700 text-base leading-relaxed">
                             <p>{content.about.content1}</p>
                             <p>{content.about.content2}</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 mb-12">
-                            <Stat value="+25" label="Anos de Experiência" />
-                            <Stat value="+10M" label="Peças / Ano" />
-                            <Stat value="IATF" label="Certificação" />
-                        </div>
-
-                        <div className="flex items-center gap-6 border-t border-black/10 pt-8">
-                            <div className="w-20 h-20 bg-gray-100 rounded-full flex-shrink-0 border-4 border-white shadow-sm overflow-hidden">
-                                <img src="https://picsum.photos/seed/founder/200/200" alt="Fundador" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                            </div>
-                            <div>
-                                <p className="font-serif italic text-lg text-black">"O nosso compromisso é com a precisão e a inovação contínua."</p>
-                                <p className="text-sm text-gray-500 mt-2">- Manuel Bueso, Fundador</p>
+                            <div className="pt-4">
+                                <span className="inline-block h-1 w-20 bg-yellow-400"></span>
                             </div>
                         </div>
-                    </motion.div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div className="sm:col-span-2">
+                                <StatCard value="+25" label="Anos de Experiência" />
+                            </div>
+                            <StatCard value="+10M" label="Peças / Ano" />
+                            <StatCard value="IATF 16949" label="Certificação" />
+                        </div>
+                    </div>
+
+                    <div className="mt-24">
+                        <h3 className="text-2xl font-bold text-center mb-10">A Nossa Trajetória em Imagens</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {(content.about.gallery || []).map((imageUrl: string, index: number) => {
+                                return (
+                                    <button
+                                        key={index}
+                                        onClick={() => setSelectedImage(imageUrl)}
+                                        className="block aspect-square bg-gray-200 group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-yellow-400 overflow-hidden"
+                                        aria-label={`Ver imagem ${index + 1}`}
+                                    >
+                                        <img
+                                            src={imageUrl}
+                                            alt={`Galeria ${index + 1}`}
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            <Modal isOpen={!!selectedImage} onClose={() => setSelectedImage(null)} size="lg" padding={false}>
+                {selectedImage && (
+                    <img 
+                        src={selectedImage.replace('/400/400', '/1200/800')}
+                        alt="Vista ampliada da galeria" 
+                        className="w-full h-auto object-contain max-h-[90vh]"
+                    />
+                )}
+            </Modal>
+        </>
     );
 };
 
