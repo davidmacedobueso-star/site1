@@ -46,16 +46,16 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
     ];
 
     return (
-        <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md border-b border-gray-200 py-4 shadow-sm' : 'bg-transparent py-6'}`}>
+        <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled || isMenuOpen ? 'bg-white border-b border-gray-200 py-4 shadow-sm' : 'bg-transparent py-6'}`}>
             <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                 <div className="text-xl font-black tracking-tighter">
-                    <a href="#home" className={`flex items-center gap-2 transition-colors ${scrolled ? 'text-zinc-900' : 'text-white'}`}>
+                    <a href="#home" className={`flex items-center gap-2 transition-colors ${scrolled || isMenuOpen ? 'text-zinc-900' : 'text-white'}`}>
                         <span>PLÁSTICOS</span> 
                         <span className="text-yellow-500">BUESO</span>
                     </a>
                 </div>
                 
-                <div className={`hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest transition-colors ${scrolled ? 'text-zinc-600' : 'text-zinc-300'}`}>
+                <div className={`hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest transition-colors ${scrolled || isMenuOpen ? 'text-zinc-600' : 'text-zinc-300'}`}>
                     {navLinks.map(link => (
                          <a key={link.href} href={link.href} className={`hover:text-yellow-500 transition-colors ${scrolled ? 'hover:text-yellow-600' : ''}`}>{link.label}</a>
                     ))}
@@ -71,7 +71,7 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
                             e.preventDefault();
                             onAdminClick();
                         }}
-                        className={`px-4 py-2 border transition-colors ${scrolled ? 'border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white' : 'border-white text-white hover:bg-white hover:text-zinc-900'}`}
+                        className={`px-4 py-2 border transition-colors ${scrolled || isMenuOpen ? 'border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white' : 'border-white text-white hover:bg-white hover:text-zinc-900'}`}
                     >Gestão</button>
                 </div>
 
@@ -84,7 +84,7 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
             
             {/* Mobile Menu Overlay & Panel */}
             <div
-                className={`md:hidden fixed inset-0 z-40 transition-opacity duration-300 ease-in-out ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`md:hidden fixed inset-0 z-[51] transition-opacity duration-300 ease-in-out ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 aria-hidden={!isMenuOpen}
             >
                 {/* Overlay */}
