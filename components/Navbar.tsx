@@ -7,15 +7,7 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    
 
     useEffect(() => {
         if (isMenuOpen) {
@@ -46,36 +38,18 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
     ];
 
     return (
-        <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled || isMenuOpen ? 'bg-white border-b border-gray-200 py-4 shadow-sm' : 'bg-transparent py-6'}`}>
+                <nav className={`fixed w-full z-50 transition-all duration-300 bg-white border-b border-gray-200 py-4 shadow-sm`}>
             <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                 <div className="text-xl font-black tracking-tighter">
-                    <a href="#home" className={`flex items-center gap-2 transition-colors ${scrolled || isMenuOpen ? 'text-zinc-900' : 'text-white'}`}>
+                                        <a href="#home" className="flex items-center gap-2 text-zinc-900">
                         <span>PLÁSTICOS</span> 
                         <span className="text-yellow-500">BUESO</span>
                     </a>
                 </div>
                 
-                <div className={`hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest transition-colors ${scrolled || isMenuOpen ? 'text-zinc-600' : 'text-zinc-300'}`}>
-                    {navLinks.map(link => (
-                         <a key={link.href} href={link.href} className={`hover:text-yellow-500 transition-colors ${scrolled ? 'hover:text-yellow-600' : ''}`}>{link.label}</a>
-                    ))}
-                    <button 
-                        onClick={(e) => {
-                            e.preventDefault();
-                            onContactClick();
-                        }}
-                        className={`hover:text-yellow-500 transition-colors ${scrolled ? 'hover:text-yellow-600' : ''}`}
-                    >Contacto</button>
-                    <button 
-                        onClick={(e) => {
-                            e.preventDefault();
-                            onAdminClick();
-                        }}
-                        className={`px-4 py-2 border transition-colors ${scrolled || isMenuOpen ? 'border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white' : 'border-white text-white hover:bg-white hover:text-zinc-900'}`}
-                    >Gestão</button>
-                </div>
 
-                <button id="menu-btn" className={`md:hidden focus:outline-none z-[60] relative h-6 w-6 ${isMenuOpen || scrolled ? 'text-zinc-900' : 'text-white'}`} onClick={toggleMenu} aria-label={isMenuOpen ? "Fechar Menu" : "Abrir Menu"}>
+
+                                <button id="menu-btn" className="focus:outline-none z-[60] relative h-6 w-6 text-zinc-900" onClick={toggleMenu} aria-label={isMenuOpen ? "Fechar Menu" : "Abrir Menu"}>
                     <span className={`block absolute h-0.5 w-full bg-current transform transition duration-300 ease-in-out ${isMenuOpen ? 'rotate-45' : '-translate-y-1.5'}`}></span>
                     <span className={`block absolute h-0.5 w-full bg-current transform transition duration-300 ease-in-out ${isMenuOpen ? 'opacity-0' : ''}`}></span>
                     <span className={`block absolute h-0.5 w-full bg-current transform transition duration-300 ease-in-out ${isMenuOpen ? '-rotate-45' : 'translate-y-1.5'}`}></span>
@@ -84,7 +58,7 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick, onAdminClick }) => {
             
             {/* Mobile Menu Overlay & Panel */}
             <div
-                className={`md:hidden fixed inset-0 z-[51] transition-opacity duration-300 ease-in-out ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`fixed inset-0 z-[51] transition-opacity duration-300 ease-in-out ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 aria-hidden={!isMenuOpen}
             >
                 {/* Overlay */}
